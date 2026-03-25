@@ -141,6 +141,7 @@ def new():
             clave=clave,
             descripcion=safe_string(form.descripcion.data, max_len=512, save_enie=True),
             descripcion_corta=safe_string(form.descripcion_corta.data, max_len=64, save_enie=True),
+            distrito_id=form.distrito.data,
             domicilio_id=form.domicilio.data,
             apertura=form.apertura.data,
             cierre=form.cierre.data,
@@ -186,6 +187,7 @@ def edit(oficina_id):
             oficina.clave = clave
             oficina.descripcion = safe_string(form.descripcion.data, max_len=512, save_enie=True)
             oficina.descripcion_corta = safe_string(form.descripcion_corta.data, max_len=64, save_enie=True)
+            oficina.distrito_id = form.distrito.data
             oficina.domicilio_id = form.domicilio.data
             oficina.apertura = form.apertura.data
             oficina.cierre = form.cierre.data
@@ -207,6 +209,7 @@ def edit(oficina_id):
     form.clave.data = oficina.clave
     form.descripcion_corta.data = oficina.descripcion_corta
     form.descripcion.data = oficina.descripcion
+    form.distrito.data = oficina.distrito_id  # Se manda distrito_id porque es un select
     form.domicilio.data = oficina.domicilio_id  # Se manda domicilio_id porque es un select
     form.apertura.data = oficina.apertura
     form.cierre.data = oficina.cierre

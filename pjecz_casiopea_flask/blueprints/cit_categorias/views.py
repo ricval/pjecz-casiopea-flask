@@ -135,7 +135,7 @@ def new():
             flash("El nombre es incorrecto o está vacío", "warning")
         # Si es válido, guardar
         if es_valido:
-            cit_categoria = CitCategoria(clave=clave, nombre=nombre, es_valido=form.es_activo.data)
+            cit_categoria = CitCategoria(clave=clave, nombre=nombre, es_activo=form.es_activo.data)
             cit_categoria.save()
             bitacora = Bitacora(
                 modulo=Modulo.query.filter_by(nombre=MODULO).first(),
