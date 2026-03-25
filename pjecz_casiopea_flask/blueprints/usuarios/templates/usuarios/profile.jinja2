@@ -2,15 +2,15 @@
 {% import 'macros/detail.jinja2' as detail with context %}
 {% import 'macros/topbar.jinja2' as topbar %}
 
-{% block title %}Mi Perfil{% endblock %}
+{% block title %}Perfil{% endblock %}
 
 {% block topbar_actions %}
-    {{ topbar.page(current_user.nombre) }}
+    {{ topbar.page('Perfil') }}
 {% endblock %}
 
 {% block content %}
     {% call detail.card('Mi Perfil') %}
-        {{ detail.label_value_big('Nombre', current_user.nombre) }}
+        {{ detail.label_value('Nombre', current_user.nombre) }}
         {{ detail.label_value('Distrito', current_user.autoridad.distrito.nombre) }}
         {{ detail.label_value('Autoridad', current_user.autoridad.descripcion) }}
         {{ detail.label_value('e-mail', current_user.email) }}

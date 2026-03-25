@@ -720,7 +720,7 @@ def copiar_cit_citas(conn_old, cursor_old, conn_new, cursor_new) -> str:
             INSERT INTO cit_citas (id, id_original,
                 cit_cliente_id, cit_servicio_id, oficina_id,
                 inicio, termino, notas, estado, cancelar_antes,
-                asistencia, codigo_asistencia, codigo_acceso_id, codigo_acceso_imagen,
+                asistencia, codigo_asistencia, codigo_acceso_id, codigo_acceso_url,
                 estatus, creado, modificado)
             VALUES (%s, %s,
                 (SELECT id FROM cit_clientes WHERE email = %s),

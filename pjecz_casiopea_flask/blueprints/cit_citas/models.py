@@ -47,7 +47,8 @@ class CitCita(database.Model, UniversalMixin):
     asistencia: Mapped[bool] = mapped_column(default=False)
     codigo_asistencia: Mapped[Optional[str]] = mapped_column(String(6), default="000000")
     codigo_acceso_id: Mapped[Optional[int]]
-    codigo_acceso_imagen: Mapped[Optional[bytes]] = mapped_column(BYTEA)
+    # codigo_acceso_imagen: Mapped[Optional[bytes]] = mapped_column(BYTEA)
+    codigo_acceso_url: Mapped[Optional[str]] = mapped_column(String(512))
 
     # Para controlar la migracion desde pjecz_citas_v2 se incluye el id_original
     id_original: Mapped[Optional[int]] = mapped_column(index=True)
