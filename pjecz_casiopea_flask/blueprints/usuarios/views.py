@@ -6,10 +6,10 @@ import json
 import re
 from datetime import datetime, timedelta
 
-import google.auth.transport.requests
-import google.oauth2.id_token
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from google.auth.transport.requests import Request
+from google.oauth2.id_token import verify_firebase_token
 from pytz import timezone
 
 from ...config.firebase import get_firebase_settings
@@ -17,7 +17,7 @@ from ...lib.cryptography_api_key import generate_api_key
 from ...lib.datatables import get_datatable_parameters, output_datatable_json
 from ...lib.pwgen import generar_contrasena
 from ...lib.safe_next_url import safe_next_url
-from ...lib.safe_string import CONTRASENA_REGEXP, EMAIL_REGEXP, TOKEN_REGEXP, safe_email, safe_message, safe_string, safe_uuid
+from ...lib.safe_string import CONTRASENA_REGEXP, EMAIL_REGEXP, safe_email, safe_message, safe_string, safe_uuid
 from ..autoridades.models import Autoridad
 from ..bitacoras.models import Bitacora
 from ..distritos.models import Distrito
@@ -25,10 +25,8 @@ from ..entradas_salidas.models import EntradaSalida
 from ..modulos.models import Modulo
 from ..permisos.models import Permiso
 from .decorators import anonymous_required, permission_required
-from .forms import AccesoForm, UsuarioForm
+from .forms import AccesoForm, FirebaseForm, UsuarioForm
 from .models import Usuario
-
-HTTP_REQUEST = google.auth.transport.requests.Request()
 
 MODULO = "USUARIOS"
 
@@ -40,68 +38,80 @@ usuarios = Blueprint("usuarios", __name__, template_folder="templates")
 def login():
     """Acceso al Sistema"""
     firebase_settings = get_firebase_settings()
-    form = AccesoForm(siguiente=request.args.get("siguiente"))
-    if form.validate_on_submit():
-        # Tomar valores del formulario
-        identidad = str(request.form.get("identidad"))
-        contrasena = str(request.form.get("contrasena"))
-        token = str(request.form.get("token"))
-        siguiente_url = str(request.form.get("siguiente"))
-        # Si esta definida la variable de entorno FIREBASE_APIKEY
-        if firebase_settings.APIKEY != "":
-            # Entonces debe ingresar con Google/Microsoft/GitHub
-            if re.fullmatch(TOKEN_REGEXP, token) is not None:
-                # Acceso por Firebase Auth
-                claims = google.oauth2.id_token.verify_firebase_token(token, HTTP_REQUEST)
-                if claims:
-                    email = claims.get("email", "Unknown")
-                    usuario = Usuario.find_by_identity(email)
-                    if usuario and usuario.authenticated(with_password=False):
-                        if login_user(usuario, remember=True) and usuario.is_active:
-                            EntradaSalida(
-                                usuario_id=usuario.id,
-                                tipo="INGRESO",
-                                direccion_ip=request.remote_addr,
-                            ).save()
-                            if siguiente_url:
-                                return redirect(safe_next_url(siguiente_url))
-                            return redirect(url_for("sistemas.start"))
-                        else:
-                            flash("No está activa esa cuenta.", "warning")
+    # Si está configurado Firebase, usar formulario identidad-contraseña
+    if firebase_settings.APIKEY != "":
+        form = FirebaseForm()
+        # Si se recibe el formulario
+        if form.validate_on_submit():
+            identidad = str(form.identidad.data).strip()
+            token = form.token.data
+            siguiente = str(form.siguiente.data)
+            # Si es válido el email
+            if re.fullmatch(EMAIL_REGEXP, identidad) is not None:
+                http_request = Request()
+                try:
+                    id_info = verify_firebase_token(token, http_request)
+                except Exception as error:
+                    id_info = None
+                    flash(f"Error al verificar el token: {error}", "warning")
+                # Si es válido el token y el email coincide con la identidad
+                if id_info and id_info["email"] == identidad:
+                    usuario = Usuario.find_by_identity(identidad)
+                    # Si el usuario existe y está activo, hacer login
+                    if usuario and usuario.estatus == "A" and login_user(usuario, remember=True):
+                        if siguiente != "":
+                            return redirect(safe_next_url(siguiente))
+                        return redirect(url_for("sistemas.start"))
                     else:
-                        flash("No existe esa cuenta.", "warning")
-                else:
-                    flash("Falló la autentificación.", "warning")
+                        flash("No está activa esa cuenta", "warning")
             else:
-                flash("Token incorrecto.", "warning")
-        else:
-            # De lo contrario, el ingreso es con username/password
-            if re.fullmatch(EMAIL_REGEXP, identidad) is None:
-                flash("Correo electrónico no válido.", "warning")
+                flash("No es válido el correo electrónico o el token.", "warning")
+        # Si viene el parámetro siguiente en la URL, agregarlo al formulario
+        siguiente = request.args.get("siguiente")
+        if siguiente is not None:
+            form.siguiente.data = siguiente
+        # Entregar formulario
+        return render_template(
+            "usuarios/login.jinja2",
+            form=form,
+            title="Plataforma Lira",
+            firebase_settings=firebase_settings,
+        )
+    else:
+        form = AccesoForm(siguiente=request.args.get("siguiente"))
+        # Si se recibe el formulario
+        if form.validate_on_submit():
+            correo_electronico = str(form.correo_electronico.data).strip()
+            contrasena = str(form.contrasena.data).strip()
+            siguiente = str(form.siguiente.data)
+            # Si son válidos el email y la contraseña
+            if re.fullmatch(EMAIL_REGEXP, correo_electronico) is None:
+                flash("No es válido el correo electrónico.", "warning")
             elif re.fullmatch(CONTRASENA_REGEXP, contrasena) is None:
-                flash("Contraseña no válida.", "warning")
+                flash("No es válida la contraseña.", "warning")
             else:
-                usuario = Usuario.find_by_identity(identidad)
+                usuario = Usuario.find_by_identity(correo_electronico)
+                # Si el usuario existe y está activo, hacer login
                 if usuario and usuario.authenticated(password=contrasena):
-                    if login_user(usuario, remember=True) and usuario.is_active:
-                        EntradaSalida(
-                            usuario_id=usuario.id,
-                            tipo="INGRESO",
-                            direccion_ip=request.remote_addr,
-                        ).save()
-                        if siguiente_url:
-                            return redirect(safe_next_url(siguiente_url))
+                    if usuario.estatus == "A" and login_user(usuario, remember=True):
+                        if siguiente:
+                            return redirect(safe_next_url(siguiente))
                         return redirect(url_for("sistemas.start"))
                     else:
                         flash("No está activa esa cuenta", "warning")
                 else:
-                    flash("Usuario o contraseña incorrectos.", "warning")
-    return render_template(
-        "usuarios/login.jinja2",
-        form=form,
-        firebase_settings=firebase_settings,
-        title="Plataforma Casiopea",
-    )
+                    flash("Correo electrónico o contraseña incorrectos.", "warning")
+        # Si viene el parámetro siguiente en la URL, agregarlo al formulario
+        siguiente = request.args.get("siguiente")
+        if siguiente is not None:
+            form.siguiente.data = siguiente
+        # Entregar formulario
+        return render_template(
+            "usuarios/login.jinja2",
+            form=form,
+            title="Plataforma Casiopea",
+            firebase_settings=None,
+        )
 
 
 @usuarios.route("/logout")

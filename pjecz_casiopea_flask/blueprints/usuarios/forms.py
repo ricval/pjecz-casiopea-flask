@@ -14,15 +14,22 @@ CONTRASENA_MENSAJE = "De 8 a 48 caracteres con al menos una mayúscula, una min�
 class AccesoForm(FlaskForm):
     """Formulario de acceso al sistema"""
 
-    siguiente = HiddenField()
-    identidad = StringField("Correo electrónico o usuario", validators=[Optional(), Length(8, 256)])
+    siguiente = HiddenField(default="")
+    correo_electronico = StringField("Correo electrónico", validators=[DataRequired(), Length(8, 256)])
     contrasena = PasswordField(
         "Contraseña",
-        validators=[Optional(), Length(8, 48), Regexp(CONTRASENA_REGEXP, 0, CONTRASENA_MENSAJE)],
+        validators=[DataRequired(), Length(8, 48), Regexp(CONTRASENA_REGEXP, 0, CONTRASENA_MENSAJE)],
     )
-    email = StringField("Correo electrónico", validators=[Optional(), Email()])
-    token = StringField("Token", validators=[Optional()])
-    guardar = SubmitField("Guardar")
+    ingresar = SubmitField("Ingresar")
+
+
+class FirebaseForm(FlaskForm):
+    """Formulario de acceso por Firebase"""
+
+    siguiente = HiddenField(default="")
+    identidad = StringField("Identidad", validators=[DataRequired()])
+    token = StringField("Token", validators=[DataRequired()])
+    ingresar = SubmitField("Ingresar")
 
 
 class UsuarioForm(FlaskForm):
