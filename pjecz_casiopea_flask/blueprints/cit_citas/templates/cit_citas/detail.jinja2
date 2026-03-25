@@ -71,7 +71,11 @@
     {% call detail.card(title='Código de asistencia', estatus=cit_cita.estatus) %}
         {{ detail.label_value('Código asistencia', cit_cita.codigo_asistencia) }}
         {{ detail.label_value('ID', cit_cita.codigo_acceso_id) }}
-        {{ detail.label_value('URL', cit_cita.codigo_acceso_url) }}
+        {% if cit_cita.codigo_acceso_url %}
+            <div class="text-center">
+                <img src="{{ cit_cita.codigo_acceso_url }}" alt="QR Code" class="img-fluid" style="max-width: 200px;">
+            </div>
+        {% endif %}
     {% endcall %}
 {% endblock %}
 
