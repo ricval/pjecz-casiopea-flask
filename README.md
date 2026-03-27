@@ -50,3 +50,9 @@ ENVIRONMENT=development
 # Si es para producción, definir el prefijo de la aplicación comenzando con /
 PREFIX=
 ```
+## Instalación
+
+Para desarrollo ejecute:
+```bash
+uv sync
+```
