@@ -293,7 +293,7 @@ def edit(cit_servicio_id):
         if str(valor) in cit_servicio.dias_habilitados:
             dias_habilitados += f"{dia}, "
     # Definir valores en el formulario
-    form.cit_categoria.data = cit_servicio.cit_categoria_id  # Select que necesita el ID de cit_categoria
+    form.cit_categoria.data = str(cit_servicio.cit_categoria_id)  # Select que necesita el ID de cit_categoria
     form.clave.data = cit_servicio.clave
     form.descripcion.data = cit_servicio.descripcion
     form.duracion.data = cit_servicio.duracion

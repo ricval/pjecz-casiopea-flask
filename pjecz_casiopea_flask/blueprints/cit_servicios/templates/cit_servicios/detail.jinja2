@@ -94,7 +94,6 @@
             <table id="cit_citas_datatable" class="table display nowrap" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Creado</th>
                         <th>Fecha</th>
                         <th>Inicio</th>
                         <th>Término</th>
@@ -168,7 +167,6 @@
             configDTCitCitas['ajax']['url'] = '{{ url_for("cit_citas.datatable_json") }}';
             configDTCitCitas['ajax']['data'] = { 'estatus': "A", 'cit_servicio_id': "{{ cit_servicio.id }}" };
             configDTCitCitas['columns'] = [
-                { data: "detalle" },
                 { data: "fecha" },
                 { data: "inicio" },
                 { data: "termino" },
@@ -179,21 +177,14 @@
             ];
             configDTCitCitas['columnDefs'] = [
             {
-                targets: 0, // detalle
-                data: null,
-                render: function(data, type, row, meta) {
-                    return '<a href="' + data.url + '">' + data.creado + '</a>';
-                }
-            },
-            {
-                targets: 1, // fecha
+                targets: 0, // fecha
                 type: 'date',
                 render: function (data, type, row) {
-                    return moment(data).format('YYYY-MM-DD, ddd');
+                    return '<a href="' + data.url + '">' + data.fecha + '</a>';
                 }
             },
             {
-                targets: 4, // cit_cliente
+                targets: 3, // cit_cliente
                 data: null,
                 render: function(data, type, row, meta) {
                     if (data.url !== '') {
@@ -203,14 +194,14 @@
                 }
             },
             {
-                targets: 5, // cit_cliente_nombre
+                targets: 4, // cit_cliente_nombre
                 data: null,
                 render: function(data, type, row, meta) {
                     return data.length > 32 ? data.substring(0, 32) + '…' : data;
                 }
             },
             {
-                targets: 6, // oficina
+                targets: 5, // oficina
                 data: null,
                 render: function(data, type, row, meta) {
                     if (data.url !== '') {
@@ -220,7 +211,7 @@
                 }
             },
             {
-                targets: 7, // Estado
+                targets: 6, // Estado
                 data: null,
                 render: function(data, type, row, meta) {
                     let bg_class = "bg-primary";

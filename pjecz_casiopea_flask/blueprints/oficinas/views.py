@@ -209,8 +209,8 @@ def edit(oficina_id):
     form.clave.data = oficina.clave
     form.descripcion_corta.data = oficina.descripcion_corta
     form.descripcion.data = oficina.descripcion
-    form.distrito.data = oficina.distrito_id  # Se manda distrito_id porque es un select
-    form.domicilio.data = oficina.domicilio_id  # Se manda domicilio_id porque es un select
+    form.distrito.data = str(oficina.distrito_id)  # Se manda distrito_id porque es un select
+    form.domicilio.data = str(oficina.domicilio_id)  # Se manda domicilio_id porque es un select
     form.apertura.data = oficina.apertura
     form.cierre.data = oficina.cierre
     form.limite_personas.data = oficina.limite_personas

@@ -38,7 +38,6 @@
             <table id="cit_citas_datatable" class="table display nowrap" style="width:100%">
                 <thead>
                     <tr>
-                        <th>Creado</th>
                         <th>Fecha</th>
                         <th>Inicio</th>
                         <th>Término</th>
@@ -88,7 +87,6 @@
             configDTCitCitas['ajax']['url'] = '{{ url_for("cit_citas.datatable_json") }}';
             configDTCitCitas['ajax']['data'] = { 'estatus': "A", 'cit_cliente_id': "{{ cit_cliente.id }}" };
             configDTCitCitas['columns'] = [
-                { data: "detalle" },
                 { data: "fecha" },
                 { data: "inicio" },
                 { data: "termino" },
@@ -98,21 +96,14 @@
             ];
             configDTCitCitas['columnDefs'] = [
                 {
-                    targets: 0, // detalle
-                    data: null,
-                    render: function(data, type, row, meta) {
-                        return '<a href="' + data.url + '">' + data.creado + '</a>';
-                    }
-                },
-                {
-                    targets: 1, // fecha
+                    targets: 0, // fecha
                     type: 'date',
                     render: function (data, type, row) {
-                        return moment(data).format('YYYY-MM-DD, ddd');
+                        return '<a href="' + data.url + '">' + data.fecha + '</a>';
                     }
                 },
                 {
-                    targets: [4, 5], // oficina y cit_servicio
+                    targets: [3, 4], // oficina y cit_servicio
                     data: null,
                     render: function(data, type, row, meta) {
                         if (data.url !== '') {
@@ -122,7 +113,7 @@
                     }
                 },
                 {
-                    targets: 6, // Estado
+                    targets: 5, // Estado
                     data: null,
                     render: function(data, type, row, meta) {
                         let bg_class = "bg-primary";
