@@ -1,0 +1,35 @@
+{% extends 'layouts/app.jinja2' %}
+{% import 'macros/detail.jinja2' as detail %}
+{% import 'macros/modals.jinja2' as modals %}
+{% import 'macros/topbar.jinja2' as topbar %}
+
+{% block title %}Juzgado para Expedientes {{ exp_juzgado.clave }}{% endblock %}
+
+{% block topbar_actions %}
+    {% call topbar.page_buttons('Juzgado para Expedientes ' + exp_juzgado.clave) %}
+        {{ topbar.button_previous('Juzgados', url_for('exp_juzgados.list_active')) }}
+        {% if current_user.can_edit('EXP JUZGADOS') %}
+            {{ topbar.button_edit('Editar', url_for('exp_juzgados.edit', exp_juzgado_id=exp_juzgado.id)) }}
+        {% endif %}
+        {% if current_user.can_admin('EXP JUZGADOS') %}
+            {% if exp_juzgado.estatus == 'A' %}{{ topbar.button_delete('Eliminar', url_for('exp_juzgados.delete', exp_juzgado_id=exp_juzgado.id)) }}{% endif %}
+            {% if exp_juzgado.estatus == 'B' %}{{ topbar.button_recover('Recuperar', url_for('exp_juzgados.recover', exp_juzgado_id=exp_juzgado.id)) }}{% endif %}
+        {% endif %}
+    {% endcall %}
+{% endblock %}
+
+{% block content %}
+    {% call detail.card(estatus=exp_juzgado.estatus) %}
+        {{ detail.label_value_big('Clave', exp_juzgado.clave) }}
+        {{ detail.label_value('Descripción Corta', exp_juzgado.descripcion_corta) }}
+        {{ detail.label_value('Descripción', exp_juzgado.descripcion) }}
+    {% endcall %}
+{% endblock %}
+
+{% block custom_javascript %}
+    <!-- Modales -->
+    {% if current_user.can_admin('EXP JUZGADOS') %}
+        {% if exp_juzgado.estatus == 'A' %}{{ modals.custom_javascript_delete('Eliminar', '¿Eliminar a ' + exp_juzgado.descripcion_corta + '?') }}{% endif %}
+        {% if exp_juzgado.estatus == 'B' %}{{ modals.custom_javascript_recover('Recuperar', '¿Recuperar a ' + exp_juzgado.descripcion_corta + '?') }}{% endif %}
+    {% endif %}
+{% endblock %}
