@@ -18,7 +18,7 @@ class ExpJuzgado(database.Model, UniversalMixin):
     """
 
     # Nombre de la tabla
-    __tablename__ = "exp_juzgado"
+    __tablename__ = "exp_juzgados"
 
     # Clave primaria
     id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True)
