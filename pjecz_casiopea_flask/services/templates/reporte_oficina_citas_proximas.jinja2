@@ -1,0 +1,186 @@
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+    
+    body {
+      font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6fa; font-family: 'Outfit', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <div style="display:none;max-height:0px;overflow:hidden">Reporte de próximas citas para el: {{fecha_reporte}}</div>
+  <div style="display:none;max-height:0px;overflow:hidden"><ul></ul></div>
+  <center style="width: 100%; background-color: #e7e7e7;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f4f6fa;">
+    <tr>
+      <td style="padding: 40px 0 0 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(18, 21, 40, 0.12);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #121528; padding: 24px 40px;">
+              <p style="margin: 0; color: rgba(255,255,255,0.6); font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">SAJI Citas</p>
+            </td>
+          </tr>
+
+          <!-- Sección de Título - Icono -->
+          <tr>
+            <td style="background-color: #1a1f3d; padding: 32px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td width="60" valign="top">
+                    <div style="width: 50px; height: 50px; background-color: rgba(255,255,255,0.15); border-radius: 12px; text-align: center; line-height: 50px;">
+                      <span style="font-size: 28px;">📋</span>
+                    </div>
+                  </td>
+                  <td style="padding-left: 16px;">
+                    <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600; line-height: 1.4;">
+                      Reporte de próximas citas agendadas
+                    </h1>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Mensaje de Saludo -->
+          <tr>
+            <td style="padding: 32px 40px 20px 40px;">
+              <h2 style="margin: 0; color: #2d3a1f; font-size: 20px; font-weight: 400;">
+                Buen día, <strong>{{usuario_nombre}}</strong>
+              </h2>
+              <p style="margin: 12px 0 0 0; color: #3a4260; font-size: 15px; line-height: 1.6;">Te mostramos la información detallada de tu reporte:</p>
+            </td>
+          </tr>
+
+          <!-- Datos de información -->
+          <tr>
+            <td style="padding: 0 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8f9fc; border-radius: 12px; border: 1px solid #e4e6f0;">
+                <tr>
+                  <td style="padding: 24px;">
+                    <!-- Oficina -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 20px; border-bottom: 1px solid #e4e6f0; padding-bottom: 20px;">
+                      <tr>
+                        <td width="36" valign="top">
+                          <div style="width: 32px; height: 32px; background-color: #1a1f3d; border-radius: 8px; text-align: center; line-height: 32px;">
+                            <span style="color: #ffffff; font-size: 14px;">🏢</span>
+                          </div>
+                        </td>
+                        <td style="padding-left: 12px;">
+                          <p style="margin: 0; color: #4a5280; font-size: 12px; font-weight: 500;">Oficina:</p>
+                          <p style="margin: 4px 0 0 0; color: #121528; font-size: 16px; font-weight: 600;">
+                            {{oficina}}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Fecha -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                      <tr>
+                        <td width="36" valign="top">
+                          <div style="width: 32px; height: 32px; background-color: #1a1f3d; border-radius: 8px; text-align: center; line-height: 32px;">
+                            <span style="color: #ffffff; font-size: 14px;">📅</span>
+                          </div>
+                        </td>
+                        <td style="padding-left: 12px;">
+                          <p style="margin: 0; color: #4a5280; font-size: 12px; font-weight: 500;">Fecha del reporte:</p>
+                          <p style="margin: 4px 0 0 0; color: #121528; font-size: 16px; font-weight: 600;">
+                            {{fecha_reporte}}
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Área de reporte -->
+          <tr>
+            <td style="padding: 24px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="text-align: center;">
+                <tr>
+                  <td>
+                    <p style="margin: 0; padding: 0; color: #3a4260; font-size: 14px; font-weight: 600;">
+                      Reporte de próximas citas agendadas para el próximo día hábil
+                    </p>
+                  {% if citas %}
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse; margin-top: 16px;">
+                      <thead>
+                        <tr style="background-color: #e4e6f0;">
+                          <th style="padding: 12px; text-align: left; color: #3a4260; font-size: 14px; font-weight: 600;">Horario</th>
+                          <th style="padding: 12px; text-align: left; color: #3a4260; font-size: 14px; font-weight: 600;">Nombre del solicitante</th>
+                          <th style="padding: 12px; text-align: left; color: #3a4260; font-size: 14px; font-weight: 600;">Servicio</th>
+                          <th style="padding: 12px; text-align: left; color: #3a4260; font-size: 14px; font-weight: 600;">Notas</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Contenido del reporte -->
+                      {% for cita in citas %}
+                        <tr>
+                          <td style="padding: 12px; text-align: left; color: #121528; font-size: 14px;">{{cita.inicio.strftime('%H:%M')}}<br/>{{cita.termino.strftime('%H:%M')}}</td>
+                          <td style="padding: 12px; text-align: left; color: #121528; font-size: 14px;">{{cita.cit_cliente.nombre}}<br><span style="color: #51a2ff; font-size: 12px;">{{cita.cit_cliente.email}}</span></td>
+                          <td style="padding: 12px; text-align: left; color: #121528; font-size: 14px;">{{cita.cit_servicio.clave}}<br/><span style="color: #838383; font-size: 10px;">{{cita.cit_servicio.descripcion}}</span></td>
+                          <td style="padding: 12px; text-align: left; color: #121528; font-size: 12px; font-family: Consolas;">{{cita.notas}}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  {% else %}
+                    <h2 style="margin: 0; padding: 0; color: #252936; font-size: 20px; font-weight: 600;">
+                      ¡En horabuena, no hay citas programadas!
+                    </h2>
+                  {% endif %}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Globo de Mensaje -->
+          <tr>
+            <td style="padding: 0 40px 32px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #dff2fe; border-radius: 12px; border-radius: 12px; border-left: 4px solid #2b7fff;">
+                <tr>
+                  <td style="padding: 20px 24px;">
+                    <p style="margin: 0 0 8px 0; color: #2b7fff; font-size: 16px; font-weight: 700;">
+                      <span style="margin-right: 8px; font-size: 20px;">ℹ️</span> Información
+                    </p>
+                    <p style="margin: 0; color: #51a2ff; font-size: 14px; line-height: 1.5; font-style: italic;">
+                        Este reporte es generado por el sistema SAJI de citas a las 2:00 PM del día actual.<br />
+                        En lista todas las citas agendadas para el próximo día hábil pertenecientes a su oficina.<br />
+                        Puede preparar la información necesaria de cada cita con anticipación para agilizar el proceso de atención.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #121528; padding: 20px 40px;">
+              <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 12px; text-align: center;">
+                © 2026 Todos los derechos reservados. Términos y condiciones.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <!-- Disclaimer -->
+    <tr>
+      <td style="padding: 16px 40px;">
+        <p style="margin: 0; color: #6a7280; font-size: 12px; text-align: center; font-style: italic;">
+          Este correo fue generado automáticamente, favor de no contestar
+        </p>
+      </td>
+    </tr>
+  </table>
+</center>
+</body>

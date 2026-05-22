@@ -8,6 +8,8 @@ from cli.commands.autoridades import autoridades
 from cli.commands.bitacoras import bitacoras
 from cli.commands.cit_citas import cit_citas
 from cli.commands.cit_clientes import cit_clientes
+from cli.commands.cit_clientes_recuperaciones import cit_clientes_recuperaciones
+from cli.commands.cit_clientes_registros import cit_clientes_registros
 from cli.commands.db import db
 from cli.commands.distritos import distritos
 from cli.commands.domicilios import domicilios
@@ -24,6 +26,8 @@ cli.add_typer(autoridades, name="autoridades")
 cli.add_typer(bitacoras, name="bitacoras")
 cli.add_typer(cit_citas, name="cit_citas")
 cli.add_typer(cit_clientes, name="cit_clientes")
+cli.add_typer(cit_clientes_recuperaciones, name="cit_clientes_recuperaciones")
+cli.add_typer(cit_clientes_registros, name="cit_clientes_registros")
 cli.add_typer(db, name="db")
 cli.add_typer(distritos, name="distritos")
 cli.add_typer(domicilios, name="domicilios")

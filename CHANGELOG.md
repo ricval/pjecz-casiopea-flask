@@ -3,6 +3,23 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.3.0] - 2026-05-22
+
+### ✨ Mejoras
+
+- Añadido archivo CLI `cit-clientes-registros` con el comando `eliminar` para que se ejecute todos los días y limpie los usuarios que no pudieron completar su registro y puedan volver a intentarlo.
+- Añadido archivo CLI `cit-clientes-recuperaciones` con el comando `eliminar` para que se ejecute todos los días y limpie las recuperaciones hechas por los clientes de su contraseña y permita hacer otra.
+- Envío de reporte de citas programadas para el siguiente día hábil a cada usuario de cada oficina.
+- Creación de plantilla de reporte para próximas citas agendadas.
+- Integración del servicio de envío de email.
+- Añadido número de versión y fecha de deploy en el menú izquierdo. Para saber exactamente que versión está desplegada.
+
+### 🐞 Arreglado
+
+- Botones en listado de citas, para las diferentes vistas del día, se quedaban activados al seleccionar el botón "inactivos".
+
+***
+
 ## [1.2.0] - 2026-05-20
 
 ### ✨ Mejoras

@@ -1,116 +1,38 @@
 """
 CLI Commands Cit Citas
 """
+import logging
 
-import random
-from datetime import datetime, time, timedelta
+from datetime import date, datetime, time, timedelta
 
-from faker import Faker
 from rich.console import Console
 from rich.progress import Progress
-from sqlalchemy.sql import func
 from typer import Typer
 
 from pjecz_casiopea_flask.blueprints.cit_citas.models import CitCita, database
-from pjecz_casiopea_flask.blueprints.cit_clientes.models import CitCliente
-from pjecz_casiopea_flask.blueprints.cit_oficinas_servicios.models import CitOficinaServicio
-from pjecz_casiopea_flask.blueprints.cit_servicios.models import CitServicio
+from pjecz_casiopea_flask.blueprints.cit_dias_inhabiles.models import CitDiaInhabil
 from pjecz_casiopea_flask.blueprints.oficinas.models import Oficina
+from pjecz_casiopea_flask.blueprints.usuarios_oficinas.models import UsuarioOficina
 from pjecz_casiopea_flask.main import app
+from pjecz_casiopea_flask.services.sendmail import PlantillaReporteCitasProximas, Email, MyRequestError
 
 app.app_context().push()
+
+# Configuración del logging
+bitacora = logging.getLogger(__name__)
+bitacora.setLevel(logging.INFO)
+formato = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+empunadura = logging.FileHandler("logs/cit_citas_enviar_agenda.log", encoding="utf-8")
+empunadura.setFormatter(formato)
+bitacora.addHandler(empunadura)
+
 
 cit_citas = Typer()
 
 
 @cit_citas.command()
-def agregar_falsos(maximo: int = 10, desde: str = "", hasta: str = ""):
-    """Agregar citas con datos falsos"""
-    console = Console()
-
-    # Si no viene desde, usar el día de hoy
-    if not desde:
-        desde_dt = datetime.now().date()
-    else:
-        try:
-            desde_dt = datetime.strptime(desde, "%Y-%m-%d").date()
-        except ValueError:
-            console.print("[yellow]Fecha 'desde' inválida[/yellow]")
-            return
-
-    # Si no viene hasta, usar 30 días después del día de hoy
-    if not hasta:
-        hasta_dt = datetime.now().date() + timedelta(days=30)
-    else:
-        try:
-            hasta_dt = datetime.strptime(hasta, "%Y-%m-%d").date()
-        except ValueError:
-            console.print("[yellow]Fecha 'hasta' inválida[/yellow]")
-            return
-
-    # Consultar cit_clientes
-    cit_clientes = CitCliente.query.filter(CitCliente.estatus == "A").order_by(CitCliente.creado.desc()).limit(10).all()
-
-    # Si no hay cit_clientes, salir
-    if not cit_clientes:
-        console.print("[yellow]No hay clientes para asignar citas[/yellow]")
-        return
-
-    # Inicializar el contador
-    contador = 0
-
-    # Bucle entre los cit_clientes
-    for cit_cliente in cit_clientes:
-        # Bucle para agregar citas, de una a LIMITE_CITAS_CANTIDAD
-        for _ in range(1, random.randint(1, maximo) + 1):
-            # Definir una fecha aleatoria entre desde_dt y hasta_dt
-            delta_dias = (hasta_dt - desde_dt).days
-            fecha = desde_dt + timedelta(days=random.randint(0, delta_dias))
-            # Definir una hora aleatoria entre 9:00 y 12:00
-            hora = random.randint(9, 11)
-            minuto = random.choice([0, 15, 30, 45])
-            fecha_hora = datetime(fecha.year, fecha.month, fecha.day, hora, minuto)
-            # Bucle hasta encontrar un servicio y oficina
-            while True:
-                # Consultar un CitServicio aleatorio
-                cit_servicio = CitServicio.query.order_by(func.random()).first()
-                if cit_servicio is None:
-                    console.print("[yellow]No hay servicios para asignar citas[/yellow]")
-                    return
-                # Consultar una Oficina aleatoria
-                oficina = Oficina.query.order_by(func.random()).first()
-                if oficina is None:
-                    console.print("[yellow]No hay oficinas para asignar citas[/yellow]")
-                    return
-                # Consultar si hay un CitOficinaServicio para el servicio y oficina
-                cit_oficina_servicio = CitOficinaServicio.query.filter_by(
-                    cit_servicio_id=cit_servicio.id,
-                    oficina_id=oficina.id,
-                ).first()
-                # Si lo hay, salir el bucle
-                if cit_oficina_servicio:
-                    break
-            # Crear la cita
-            cit_cita = CitCita()
-            cit_cita.cit_cliente_id = cit_cliente.id
-            cit_cita.cit_servicio_id = cit_servicio.id
-            cit_cita.oficina_id = oficina.id
-            cit_cita.inicio = fecha_hora
-            cit_cita.termino = fecha_hora + timedelta(hours=cit_servicio.duracion.hour, minutes=cit_servicio.duracion.minute)
-            cit_cita.notas = Faker().sentence(nb_words=6)
-            cit_cita.estado = "PENDIENTE"
-            cit_cita.cancelar_antes = cit_cita.inicio - timedelta(hours=24)
-            cit_cita.asistencia = False
-            cit_cita.codigo_asistencia = "".join(random.choices("0123456789", k=6))
-            cit_cita.save()
-            contador += 1
-    # Mensaje final
-    console.print(f"[green]Se han agregado {contador} citas falsas[/green]")
-
-
-@cit_citas.command()
 def eliminar(horas: int = 24):
-    """Eliminar citas pasadas"""
+    """Pasa a estatus B las citas pasadas a la fecha de hoy"""
     console = Console()
     # Definir el tiempo límite
     tiempo_limite = datetime.now() - timedelta(hours=horas)
@@ -145,3 +67,95 @@ def eliminar(horas: int = 24):
             progress.update(task, advance=len(lote_ids))
 
     console.print(f"[green]Se han eliminado {total_citas} citas con más de {horas} horas de antigüedad.[/green]")
+
+
+def _get_proximo_dia_habil() -> date:
+    """Obtener el próximo día hábil, saltando fines de semana y días inhábiles"""
+    dias_inhabiles = {
+        d.fecha
+        for d in CitDiaInhabil.query.filter(
+            CitDiaInhabil.estatus == "A",
+            CitDiaInhabil.fecha >= date.today(),
+        ).all()
+    }
+    candidate = date.today() + timedelta(days=1)
+    while True:
+        if candidate.weekday() in (5, 6) or candidate in dias_inhabiles:
+            candidate += timedelta(days=1)
+            continue
+        return candidate
+
+
+@cit_citas.command()
+def enviar_agenda():
+    """Enviar la agenda del próximo día hábil a los usuarios de cada oficina por SendGrid"""
+    console = Console()
+    bitacora.info("Inicia la tarea para enviar la agenda del próximo día hábil.")
+
+    # Obtener el próximo día hábil
+    proximo_dia_habil = _get_proximo_dia_habil()
+    console.print(f"Próximo día hábil: [cyan]{proximo_dia_habil}[/cyan]")
+    bitacora.info(f"Próximo día hábil calculado: {proximo_dia_habil}")
+
+    # Límites del día para el filtro de citas
+    inicio_dia = datetime.combine(proximo_dia_habil, time.min)
+    fin_dia = inicio_dia + timedelta(days=1)
+
+    # Consultar las oficinas activas que pueden agendar citas
+    oficinas = Oficina.query.filter(
+        Oficina.estatus == "A",
+        Oficina.puede_agendar_citas,
+    ).all()
+    bitacora.info(f"Se encontraron {len(oficinas)} oficinas activas que pueden agendar citas.")
+
+    for oficina in oficinas:
+        # Consultar las citas de la oficina para el próximo día hábil
+        citas = (
+            CitCita.query.filter(
+                CitCita.estatus == "A",
+                CitCita.estado == "PENDIENTE",
+                CitCita.oficina_id == oficina.id,
+                CitCita.inicio >= inicio_dia,
+                CitCita.inicio < fin_dia,
+            )
+            .order_by(CitCita.inicio)
+            .all()
+        )
+
+        # Consultar los usuarios activos asignados a la oficina
+        usuarios_oficinas = UsuarioOficina.query.filter(
+            UsuarioOficina.estatus == "A",
+            UsuarioOficina.oficina_id == oficina.id,
+        ).all()
+        usuarios = [uo.usuario for uo in usuarios_oficinas if uo.usuario.estatus == "A"]
+
+        if not usuarios:
+            msg = f"Oficina '{oficina.clave}' no tiene usuarios activos asignados. Se omite el envío de correo."
+            bitacora.warning(msg)
+            continue
+
+        usuarios_nombres_str = ", ".join(u.nombre for u in usuarios)
+        usuarios_emails_str = ", ".join(u.email for u in usuarios)
+
+        msg = f"Oficina '{oficina.clave}': {len(citas)} citas. Enviando a {len(usuarios)} usuario(s): {usuarios_emails_str}"
+        bitacora.info(msg)
+        # Creación de la plantilla para el email
+        plantilla_reporte_citas_proximas = PlantillaReporteCitasProximas(
+            fecha_reporte=proximo_dia_habil,
+            usuario_nombre=usuarios_nombres_str,
+            oficina=f"{oficina.clave}: {oficina.descripcion_corta}",
+            citas=citas,
+        )
+
+        # Envío de email
+        send_email = Email([u.email for u in usuarios], plantilla_reporte_citas_proximas)
+        try:
+            send_email.enviar_email()
+            bitacora.info(f"Correo para la oficina '{oficina.clave}' enviado correctamente a {usuarios_emails_str}.")
+        except MyRequestError as error:
+            error_msg = f"Error al enviar email para la oficina '{oficina.clave}' a {usuarios_emails_str}: {error}"
+            console.print(f"[red]{error_msg}[/red]")
+            bitacora.error(error_msg)
+
+    console.print(f"[green]¡Tarea terminada![/green]")
+    bitacora.info("La tarea para enviar la agenda ha finalizado.")

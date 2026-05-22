@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     SALT: str = os.getenv("SALT", "")
     SECRET_KEY: str = os.getenv("SECRET_KEY", "")
     SQLALCHEMY_DATABASE_URI: str = os.getenv("SQLALCHEMY_DATABASE_URI", "")
+    SENDGRID_API_KEY: str = os.getenv("SENDGRID_API_KEY", "")
+    SENDGRID_FROM_EMAIL: str = os.getenv("SENDGRID_FROM_EMAIL", "")
     TASK_QUEUE_NAME: str = os.getenv("TASK_QUEUE_NAME", "pjecz_casiopea")
     TZ: str = os.getenv("TZ", "America/Mexico_City")
 
