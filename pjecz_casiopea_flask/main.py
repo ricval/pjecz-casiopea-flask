@@ -21,6 +21,7 @@ from .blueprints.cit_servicios.views import cit_servicios
 from .blueprints.distritos.views import distritos
 from .blueprints.domicilios.views import domicilios
 from .blueprints.entradas_salidas.views import entradas_salidas
+from .blueprints.exp_juzgados.views import exp_juzgados
 from .blueprints.materias.views import materias
 from .blueprints.modulos.views import modulos
 from .blueprints.oficinas.views import oficinas
@@ -81,6 +82,7 @@ app.register_blueprint(cit_servicios)
 app.register_blueprint(distritos)
 app.register_blueprint(domicilios)
 app.register_blueprint(entradas_salidas)
+app.register_blueprint(exp_juzgados)
 app.register_blueprint(materias)
 app.register_blueprint(modulos)
 app.register_blueprint(oficinas)

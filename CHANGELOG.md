@@ -3,7 +3,17 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
-## [1.3.0] - 2026-05-22
+## [1.4.0] - 2026-05-22
+
+### ✨ Mejoras
+
+- Creación de un nuevo módulo llamado `exp_juzgados`. El cual contiene los juzgados de los cuales se pueden pedir expedientes. Utilizado especialmente en el servicio "Revisión de Expedientes" de la unidad "Archivo".
+
+### 🐞 Arreglado
+
+- En el detalle de `categorías` no se mostraba el detalle en sí de la categoría.
+
+## [1.3.0] - 2026-05-21
 
 ### ✨ Mejoras
 
