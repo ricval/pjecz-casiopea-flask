@@ -52,13 +52,26 @@
             color: #495057; /* Color más oscuro al pasar el mouse o enfocar */
             box-shadow: none;
         }
+        .modal-title {
+            font-size: 1.75rem;
+        }
+        .modal-body p {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .modal-body .turno-display {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--bs-primary);
+            line-height: 1;
+        }
     </style>
 </head>
 <body>
 
     <div class="capture-container">
         <h2 class="mb-4 text-secondary">Escanee su código de barras de asistencia</h2>
-        <form action="/admin/cit_citas_turnos/crear_turno" method="post" id="barcode-form" role="form" autocomplete="off">
+        <form action="/admin/cit_citas_turnos" method="post" id="barcode-form" role="form" autocomplete="off">
             <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
             <input type="text" class="form-control barcode-input" id="barcode" name="barcode" autofocus>
         </form>
@@ -73,5 +86,73 @@
         </button>
     </div>
 
+    {% if cit_cita %}
+    <!-- Modal de Éxito -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successModalLabel">Asistencia Registrada y Turno Generado</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-5">
+                    <p>Cliente: <strong>{{ cit_cita.cit_cliente.nombre }}</strong></p>
+                    <p>Oficina: <strong>{{ cit_cita.oficina.clave }} - {{ cit_cita.oficina.descripcion_corta }}</strong></p>
+                    <p>Servicio: <strong>{{ cit_cita.cit_servicio.clave }} - {{ cit_cita.cit_servicio.descripcion }}</strong></p>
+                    <p>Unidad: <strong></strong></p>
+                    <p class="mt-4">Su turno es:</p>
+                    <div class="turno-display text-primary">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% elif error %}
+    <!-- Modal de Error -->
+    <div class="modal fade" id="dangerModal" tabindex="-1" aria-labelledby="dangerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="dangerModal">Error en el código de barras</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-5">
+                    <p><strong>¡Su código de barras ya no es válido!</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    {% if cit_cita or error %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Busca el modal de éxito o el de error que esté presente en el DOM
+            const modalEl = document.getElementById('successModal') || document.getElementById('dangerModal');
+            
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                
+                // Mostrar el modal
+                modal.show();
+
+                // Ocultar el modal después de 3 segundos
+                setTimeout(function() {
+                    modal.hide();
+                }, 3000);
+
+                // Limpiar y enfocar el input cuando el modal se oculte
+                modalEl.addEventListener('hidden.bs.modal', function () {
+                    const barcodeInput = document.getElementById('barcode');
+                    barcodeInput.value = '';
+                    barcodeInput.focus();
+                });
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

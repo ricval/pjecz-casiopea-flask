@@ -8,7 +8,15 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 ### ✨ Mejoras
 
 - Añadido nuevo módulo `cit_citas_turnos`. Que muestra una página para leer el código de barras y marcar la asistencia y crear un nuevo turno en el sistema de turnos.
+- Añadido nuevo campo `turnos_unidad_id` en la tabla `oficinas`. Para establecer que unidad elegir al momento de crear un turno nuevo en el sistema de turnos.
+- Añadido nuevos campos `turno_id` y `turno` en la tabla `cit_citas`. Para guardar el turno generado por el sistema de citas al escanear el código de barras de asistencia.
 - Añadidos los campos de código de barras en el modelo de `cit_citas`. Es nuevo campo sirve para marcar la asistencia del cliente y añadir un nuevo turno al sistema de turnos.
+
+### ⚙️ Requerimientos
+
+- Actualización de BD, ejecutar _scripts_ con `psql -f [nombre_archivo.sql]`:
+    - `v1.5.0-01-add_modulo.sql`
+    - `v1.5.0-02-add_column_turno-cit-citas.sql`
 
 
 ## [1.4.0] - 2026-05-22

@@ -26,15 +26,18 @@ cit_citas_turnos = Blueprint("cit_citas_turnos", __name__, template_folder="temp
 def before_request():
     """Permiso por defecto"""
 
-@cit_citas_turnos.route("/cit_citas_turnos")
-def captura_codigo_barras():
-    """Página para la captura del código de barras de asistencia"""
-    return render_template("cit_citas_turnos/captura.jinja2")
 
-
-@cit_citas_turnos.route("/cit_citas_turnos/crear_turno", methods=["GET", "POST"])
+@cit_citas_turnos.route("/cit_citas_turnos", methods=["GET", "POST"])
 @permission_required(MODULO, Permiso.CREAR)
 def crear_turno():
     """Creación del turno en el sistema de turnos"""
+
+    if "barcode" in request.form:
+        codigo_barras = request.form["barcode"]
+        cit_cita = CitCita.query.filter_by(codigo_barras=codigo_barras).first()
+        if cit_cita:
+            return render_template("cit_citas_turnos/captura.jinja2", cit_cita=cit_cita)
+        else:
+            return render_template("cit_citas_turnos/captura.jinja2", error=True)
 
     return render_template("cit_citas_turnos/captura.jinja2")

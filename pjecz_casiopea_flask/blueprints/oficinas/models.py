@@ -4,7 +4,7 @@ Oficinas, modelos
 
 import uuid
 from datetime import time
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -40,6 +40,7 @@ class Oficina(database.Model, UniversalMixin):
     limite_personas: Mapped[int]
     puede_enviar_qr: Mapped[bool] = mapped_column(default=False)
     es_activo: Mapped[bool] = mapped_column(default=True)
+    turnos_unidad_id: Mapped[Optional[int]]
 
     # Hijos
     cit_citas: Mapped[List["CitCita"]] = relationship("CitCita", back_populates="oficina")

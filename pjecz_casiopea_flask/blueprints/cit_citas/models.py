@@ -51,6 +51,8 @@ class CitCita(database.Model, UniversalMixin):
     codigo_acceso_url: Mapped[Optional[str]] = mapped_column(String(512))
     codigo_barras: Mapped[Optional[str]] = mapped_column(String(13))
     codigo_barras_url: Mapped[Optional[str]] = mapped_column(String(512))
+    turno_id: Mapped[Optional[int]]
+    turno: Mapped[Optional[str]] = mapped_column(String(16))
 
     # Para controlar la migracion desde pjecz_citas_v2 se incluye el id_original
     id_original: Mapped[Optional[int]] = mapped_column(index=True)
