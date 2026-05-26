@@ -99,10 +99,8 @@
                     <p>Cliente: <strong>{{ cit_cita.cit_cliente.nombre }}</strong></p>
                     <p>Oficina: <strong>{{ cit_cita.oficina.clave }} - {{ cit_cita.oficina.descripcion_corta }}</strong></p>
                     <p>Servicio: <strong>{{ cit_cita.cit_servicio.clave }} - {{ cit_cita.cit_servicio.descripcion }}</strong></p>
-                    <p>Unidad: <strong></strong></p>
                     <p class="mt-4">Su turno es:</p>
-                    <div class="turno-display text-primary">
-                    </div>
+                    <div class="turno-display text-primary">{{ cit_cita.turno }}</div>
                 </div>
             </div>
         </div>
@@ -117,7 +115,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center py-5">
-                    <p><strong>¡Su código de barras ya no es válido!</strong></p>
+                    <p><strong>{{ error }}</strong></p>
                 </div>
             </div>
         </div>
