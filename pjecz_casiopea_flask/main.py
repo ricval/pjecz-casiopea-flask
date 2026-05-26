@@ -11,6 +11,7 @@ from .blueprints.autoridades.views import autoridades
 from .blueprints.bitacoras.views import bitacoras
 from .blueprints.cit_categorias.views import cit_categorias
 from .blueprints.cit_citas.views import cit_citas
+from .blueprints.cit_citas_turnos.views import cit_citas_turnos
 from .blueprints.cit_clientes.views import cit_clientes
 from .blueprints.cit_clientes_recuperaciones.views import cit_clientes_recuperaciones
 from .blueprints.cit_clientes_registros.views import cit_clientes_registros
@@ -72,6 +73,7 @@ app.register_blueprint(autoridades)
 app.register_blueprint(bitacoras)
 app.register_blueprint(cit_categorias)
 app.register_blueprint(cit_citas)
+app.register_blueprint(cit_citas_turnos)
 app.register_blueprint(cit_clientes)
 app.register_blueprint(cit_clientes_recuperaciones)
 app.register_blueprint(cit_clientes_registros)

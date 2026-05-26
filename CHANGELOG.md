@@ -7,7 +7,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
-- Añadir campos de código de barras en el modelo de cit_citas. Es nuevo campo sirve para marcar la asistencia del cliente y añadir un nuevo turno al sistema de turnos.
+- Añadido nuevo módulo `cit_citas_turnos`. Que muestra una página para leer el código de barras y marcar la asistencia y crear un nuevo turno en el sistema de turnos.
+- Añadidos los campos de código de barras en el modelo de `cit_citas`. Es nuevo campo sirve para marcar la asistencia del cliente y añadir un nuevo turno al sistema de turnos.
 
 
 ## [1.4.0] - 2026-05-22
