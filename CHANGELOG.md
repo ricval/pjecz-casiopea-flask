@@ -22,9 +22,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
     - `v1.5.0-01-add_modulo.sql`
     - `v1.5.0-02-add_column_turno-cit-citas.sql`
 
-- Nueva variable de entorno:
+- Variables de entorno:
     - `TURNOS_API_KEY`: Es la API-Key para comunicarse con el sistema de turnos.
+    - `TURNOS_API_KEY_URL`: Es la URL que se utiliza para comunicarse con el sistema de turnos.
 
+- Archivo de prueba:
+    - `test_crear_turno.json`
 
 ## [1.4.0] - 2026-05-22
 

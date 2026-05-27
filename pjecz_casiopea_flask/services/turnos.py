@@ -1,8 +1,13 @@
 """
-Servicio para enviar correos electrónicos
+Servicio para conectar con la API del sistema de turnos
 """
 
+import json
+import requests
+from requests.exceptions import RequestException
+from json.decoder import JSONDecodeError
 from typing import Tuple
+
 from pjecz_casiopea_flask.config.settings import Settings
 
 
@@ -49,21 +54,51 @@ class Turnos():
         :return Éxito o fallo y mensaje de respuesta.
         """
 
-        respuesta = True
-        mensaje = 'Todo Bien'
+        url = f"{self._settings.TURNOS_API_KEY_URL}/test_conexion"
+        headers = {"X-API-KEY": self._settings.TURNOS_API_KEY}
 
-        return respuesta, mensaje
+        try:
+            response = requests.get(url, headers=headers, timeout=5)
+            response.raise_for_status()  # Lanza una excepción para códigos de error HTTP (4xx o 5xx)
+
+            try:
+                data = response.json()
+                if "success" in data and "message" in data:
+                    return data["success"], data["message"]
+                return False, "Respuesta JSON inválida desde el servidor de turnos."
+
+            except JSONDecodeError:
+                return False, "No se pudo decodificar la respuesta JSON del servidor de turnos."
+
+        except RequestException as e:
+            return False, f"Error de conexión con el sistema de turnos: {e}"
+
+        except Exception as e:
+            return False, f"Ocurrió un error inesperado: {e}"
     
-    def test_crear_turno(self) -> Tuple[bool, str]:
+    def test_crear_turno(self, payload_json_file: json) -> Tuple[bool, str]:
         """
-        Prueba de conexión con el sistema de turnos
+        Prueba para crear un turno en el sistema de turnos
         :return Éxito o fallo y mensaje de respuesta.
         """
 
-        respuesta = True
-        mensaje = 'Todo Bien'
+        url = f"{self._settings.TURNOS_API_KEY_URL}/test_crear_turno"
+        headers = {"X-API-KEY": self._settings.TURNOS_API_KEY}
 
-        return respuesta, mensaje
-    
-    def _conectar_api_turnos(self):
-        """Conecta por API-Key al sistema de turnos"""
+        try:
+            response = requests.post(url, headers=headers, json=payload_json_file, timeout=5)
+            response.raise_for_status()
+
+            try:
+                data = response.json()
+                if "success" in data and "message" in data:
+                    return data["success"], data["message"]
+                return False, "Respuesta JSON inválida desde el servidor de turnos."
+
+            except JSONDecodeError:
+                return False, "No se pudo decodificar la respuesta JSON del servidor de turnos."
+
+        except RequestException as e:
+            return False, f"Error de conexión con el sistema de turnos: {e}"
+        except Exception as e:
+            return False, f"Ocurrió un error inesperado: {e}"

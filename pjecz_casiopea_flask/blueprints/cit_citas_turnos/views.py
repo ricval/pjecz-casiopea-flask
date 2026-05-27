@@ -1,6 +1,8 @@
 """
 Cit Citas Turnos, vistas
 """
+import json
+import os
 from typing import Tuple
 
 from flask import Blueprint, abort, render_template, request, url_for, render_template_string
@@ -150,8 +152,14 @@ def test_conexion():
 def test_turno():
     """Prueba para crear un turno en el sistema de turnos"""
 
+    # Construir la ruta al archivo JSON dentro de la carpeta static del blueprint
+    json_path = os.path.join("tests", "test_crear_turno.json")
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        test_payload = json.load(f)
+
     turnos = Turnos(get_settings())
-    resultado, mensaje = turnos.test_crear_turno()
+    resultado, mensaje = turnos.test_crear_turno(test_payload)
 
     if resultado:
         return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
