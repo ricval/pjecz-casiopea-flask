@@ -3,7 +3,7 @@ Cit Citas Turnos, vistas
 """
 from typing import Tuple
 
-from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
+from flask import Blueprint, abort, render_template, request, url_for, render_template_string
 from flask_login import current_user, login_required
 
 from ...lib.safe_string import safe_email, safe_message, safe_string, safe_uuid
@@ -121,3 +121,35 @@ def config(paso_id):
         paso_num=paso_id,
         total_pasos=total_pasos,
     )
+
+@cit_citas_turnos.route("/cit_citas_turnos/tests", methods=["GET"])
+@permission_required(MODULO, Permiso.CREAR)
+def tests():
+    """Página que en lista las pruebas que se pueden realizar"""
+
+    return render_template("cit_citas_turnos/tests.jinja2")
+
+@cit_citas_turnos.route("/cit_citas_turnos/tests/conexion", methods=["GET"])
+@permission_required(MODULO, Permiso.CREAR)
+def test_conexion():
+    """Prueba de conexión con el sistema de turnos"""
+
+    resultado = True
+
+    if resultado:
+        return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
+
+    return render_template_string('<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span>')
+
+
+@cit_citas_turnos.route("/cit_citas_turnos/tests/turno", methods=["GET"])
+@permission_required(MODULO, Permiso.CREAR)
+def test_turno():
+    """Prueba para crear un turno en el sistema de turnos"""
+
+    resultado = False
+
+    if resultado:
+        return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
+
+    return render_template_string('<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span>')
