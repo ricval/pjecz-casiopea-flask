@@ -3,6 +3,32 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.5.0] - 2026-05-29
+
+### ✨ Mejoras
+
+- Creada prueba de conexión con el sistema de turnos.
+- Crear servicio de turnos. Conexión con la API del sistema de turnos. 
+- Añadida página de pruebas.
+- Añadido página de configuración para el lector de código de barras.
+- Añadido nuevo módulo `cit_citas_turnos`. Que muestra una página para leer el código de barras y marcar la asistencia y crear un nuevo turno en el sistema de turnos.
+- Añadido nuevo campo `turnos_unidad_id` en la tabla `oficinas`. Para establecer que unidad elegir al momento de crear un turno nuevo en el sistema de turnos.
+- Añadido nuevos campos `turno_id` y `turno` en la tabla `cit_citas`. Para guardar el turno generado por el sistema de citas al escanear el código de barras de asistencia.
+- Añadidos los campos de código de barras en el modelo de `cit_citas`. Es nuevo campo sirve para marcar la asistencia del cliente y añadir un nuevo turno al sistema de turnos.
+
+### ⚙️ Requerimientos
+
+- Actualización de BD, ejecutar _scripts_ con `psql -f [nombre_archivo.sql]`:
+    - `v1.5.0-01-add_modulo.sql`
+    - `v1.5.0-02-add_column_turno-cit-citas.sql`
+
+- Variables de entorno:
+    - `TURNOS_API_KEY`: Es la API-Key para comunicarse con el sistema de turnos.
+    - `TURNOS_API_KEY_URL`: Es la URL que se utiliza para comunicarse con el sistema de turnos.
+
+- Archivo de prueba:
+    - `test_crear_turno.json`
+
 ## [1.4.0] - 2026-05-22
 
 ### ✨ Mejoras
