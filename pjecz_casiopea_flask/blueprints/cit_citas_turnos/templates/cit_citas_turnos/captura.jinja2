@@ -71,7 +71,7 @@
 
     <div class="capture-container">
         <h2 class="mb-4 text-secondary">Escanee su código de barras de asistencia</h2>
-        <form action="/admin/cit_citas_turnos" method="post" id="barcode-form" role="form" autocomplete="off">
+        <form action="{{ url_for('cit_citas_turnos.captura') }}" method="post" id="barcode-form" role="form" autocomplete="off">
             <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
             <input type="text" class="form-control barcode-input" id="barcode" name="barcode" autofocus>
         </form>
@@ -79,7 +79,7 @@
 
     <div class="action-buttons">
         <button type="button" class="btn" title="Configuración">
-            <i class="mdi mdi-cog"></i>
+            <a href="{{ url_for('cit_citas_turnos.config', paso_id=1) }}"><i class="mdi mdi-cog"></i></a>
         </button>
         <button type="submit" form="barcode-form" class="btn" title="Test">
             <i class="mdi mdi-check"></i>

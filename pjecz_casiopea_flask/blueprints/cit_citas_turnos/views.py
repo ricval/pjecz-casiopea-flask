@@ -1,7 +1,6 @@
 """
 Cit Citas Turnos, vistas
 """
-
 from typing import Tuple
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
@@ -17,7 +16,12 @@ from ..cit_citas.models import CitCita
 
 MODULO = "CIT CITAS TURNOS"
 
-cit_citas_turnos = Blueprint("cit_citas_turnos", __name__, template_folder="templates")
+cit_citas_turnos = Blueprint(
+    "cit_citas_turnos",
+    __name__,
+    template_folder="templates",
+    static_folder="static",  # Añadimos la carpeta de archivos estáticos
+)
 
 
 @cit_citas_turnos.before_request
@@ -56,3 +60,64 @@ def _crear_turno(unidad_id: int)-> Tuple[int, str]:
     """
 
     return (418, f"OCP-{1}")
+
+
+@cit_citas_turnos.route("/cit_citas_turnos/config/<int:paso_id>", methods=["GET"])
+@permission_required(MODULO, Permiso.CREAR)
+def config(paso_id):
+    """Proceso para la configuración del lector de código de barras"""
+
+    # Pasos de configuración para el lector de código de barras
+    pasos_config = [
+        {
+            "titulo": "Restaurar valores de fábrica",
+            "texto": "Escanee este código para restaurar el lector a sus valores predeterminados de fábrica.",
+            "qr_img": url_for(
+                "cit_citas_turnos.static",
+                filename="img/config/paso-01-reiniciar.png",
+            ),
+        },
+        {
+            "titulo": "Conectar por cable",
+            "texto": "Lo configura para que se conecta al PC por cable.",
+            "qr_img": url_for(
+                "cit_citas_turnos.static",
+                filename="img/config/paso-02-conectar-por-cable.png",
+            ),
+        },
+        {
+            "titulo": "Desactivar voz",
+            "texto": "Desactiva las respuestas con voz.",
+            "qr_img": url_for(
+                "cit_citas_turnos.static",
+                filename="img/config/paso-03-desactivar-voz.png",
+            ),
+        },
+        {
+            "titulo": "Desactivar vibración",
+            "texto": "Desactiva las respuestas con vibración.",
+            "qr_img": url_for(
+                "cit_citas_turnos.static",
+                filename="img/config/paso-04-desactivar-vibracion.png",
+            ),
+        },
+        {
+            "titulo": "Activar al acercar un código",
+            "texto": "Activa la lectura al acercar un código de barras al lector.",
+            "qr_img": url_for(
+                "cit_citas_turnos.static",
+                filename="img/config/paso-05-activar-al-acercar.png",
+            ),
+        },
+    ]
+    total_pasos = len(pasos_config)
+
+    if not 1 <= paso_id <= total_pasos:
+        abort(404)
+
+    return render_template(
+        "cit_citas_turnos/config.jinja2",
+        paso_actual=pasos_config[paso_id - 1],
+        paso_num=paso_id,
+        total_pasos=total_pasos,
+    )
