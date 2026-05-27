@@ -7,7 +7,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
-- Añadida página de pruebas con el sistema de turnos.
+- Creada prueba de conexión con el sistema de turnos.
+- Crear servicio de turnos. Conexión con la API del sistema de turnos. 
+- Añadida página de pruebas.
 - Añadido página de configuración para el lector de código de barras.
 - Añadido nuevo módulo `cit_citas_turnos`. Que muestra una página para leer el código de barras y marcar la asistencia y crear un nuevo turno en el sistema de turnos.
 - Añadido nuevo campo `turnos_unidad_id` en la tabla `oficinas`. Para establecer que unidad elegir al momento de crear un turno nuevo en el sistema de turnos.
@@ -19,6 +21,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Actualización de BD, ejecutar _scripts_ con `psql -f [nombre_archivo.sql]`:
     - `v1.5.0-01-add_modulo.sql`
     - `v1.5.0-02-add_column_turno-cit-citas.sql`
+
+- Nueva variable de entorno:
+    - `TURNOS_API_KEY`: Es la API-Key para comunicarse con el sistema de turnos.
 
 
 ## [1.4.0] - 2026-05-22

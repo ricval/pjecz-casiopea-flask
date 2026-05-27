@@ -6,6 +6,7 @@ from typing import Tuple
 from flask import Blueprint, abort, render_template, request, url_for, render_template_string
 from flask_login import current_user, login_required
 
+from ...config.settings import get_settings
 from ...lib.safe_string import safe_email, safe_message, safe_string, safe_uuid
 from ..bitacoras.models import Bitacora
 from ..modulos.models import Modulo
@@ -13,6 +14,7 @@ from ..cit_clientes.models import CitCliente
 from ..permisos.models import Permiso
 from ..usuarios.decorators import permission_required
 from ..cit_citas.models import CitCita
+from ...services.turnos import Turnos
 
 MODULO = "CIT CITAS TURNOS"
 
@@ -134,12 +136,13 @@ def tests():
 def test_conexion():
     """Prueba de conexión con el sistema de turnos"""
 
-    resultado = True
+    turnos = Turnos(get_settings())
+    resultado, mensaje = turnos.test_conexion()
 
     if resultado:
         return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
 
-    return render_template_string('<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span>')
+    return render_template_string(f'<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span><p>{mensaje}</p>')
 
 
 @cit_citas_turnos.route("/cit_citas_turnos/tests/turno", methods=["GET"])
@@ -147,9 +150,10 @@ def test_conexion():
 def test_turno():
     """Prueba para crear un turno en el sistema de turnos"""
 
-    resultado = False
+    turnos = Turnos(get_settings())
+    resultado, mensaje = turnos.test_crear_turno()
 
     if resultado:
         return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
 
-    return render_template_string('<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span>')
+    return render_template_string(f'<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span><p>{mensaje}</p>')
