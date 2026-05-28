@@ -142,9 +142,15 @@ def test_conexion():
     resultado, mensaje = turnos.test_conexion()
 
     if resultado:
-        return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
+        status_html = '<div id="status-conexion" hx-swap-oob="true"><span class="text-success"><i class="mdi mdi-check-circle"></i> Éxito</span></div>'
+        result_html = '<div class="alert alert-success" role="alert">¡Conexión exitosa!</div>'
+        return render_template_string(status_html + result_html)
 
-    return render_template_string(f'<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span><p>{mensaje}</p>')
+    status_html = '<div id="status-conexion" hx-swap-oob="true"><span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span></div>'
+    result_html = f'''<div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error de Conexión</h4><p>{mensaje}</p>
+                      </div>'''
+    return render_template_string(status_html + result_html)
 
 
 @cit_citas_turnos.route("/cit_citas_turnos/tests/turno", methods=["GET"])
@@ -162,6 +168,12 @@ def test_turno():
     resultado, mensaje = turnos.test_crear_turno(test_payload)
 
     if resultado:
-        return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
+        status_html = '<div id="status-turno" hx-swap-oob="true"><span class="text-success"><i class="mdi mdi-check-circle"></i> Éxito</span></div>'
+        result_html = f'<div class="alert alert-success" role="alert">{mensaje}</div>'
+        return render_template_string(status_html + result_html)
 
-    return render_template_string(f'<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span><p>{mensaje}</p>')
+    status_html = '<div id="status-turno" hx-swap-oob="true"><span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span></div>'
+    result_html = f'''<div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error al Crear Turno</h4><p>{mensaje}</p>
+                      </div>'''
+    return render_template_string(status_html + result_html)
