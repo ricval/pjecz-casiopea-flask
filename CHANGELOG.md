@@ -7,6 +7,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Validación de cita. Solo permitir que se acceda el mismo día de la cita.
 - Crear llamado a la API-KEY del sistema Tauro (Turnos) para crear un turnos y recibirlo y guardarlo en la cita.
 - Mostrar el campo `telefono` del cliente en el módulo `cit_citas_turnos` en su captura del código de barras de asistencia.
 - Añadir campo `unidad id - Turnos` en el formulario del módulo `oficina`. Para poder hacer un entendimiento entre el sistema de citas y el de turnos.

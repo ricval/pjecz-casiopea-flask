@@ -3,16 +3,13 @@ Cit Citas Turnos, vistas
 """
 import json
 import os
+from datetime import datetime
 from typing import Tuple
 
 from flask import Blueprint, abort, render_template, request, url_for, render_template_string
-from flask_login import current_user, login_required
+from flask_login import login_required
 
 from ...config.settings import get_settings
-from ...lib.safe_string import safe_email, safe_message, safe_string, safe_uuid
-from ..bitacoras.models import Bitacora
-from ..modulos.models import Modulo
-from ..cit_clientes.models import CitCliente
 from ..permisos.models import Permiso
 from ..usuarios.decorators import permission_required
 from ..cit_citas.models import CitCita
@@ -47,6 +44,8 @@ def captura():
             return render_template("cit_citas_turnos/captura.jinja2", error="¡Su código de barras ya no es válido!")
         if cit_cita.turno:
             return render_template("cit_citas_turnos/captura.jinja2", cit_cita=cit_cita)
+        if cit_cita.inicio.date() != datetime.today().date():
+            return render_template("cit_citas_turnos/captura.jinja2", error="Advertencia: Esta cita no es para el día de hoy.")
         if cit_cita.oficina.turnos_unidad_id is None:
             return render_template("cit_citas_turnos/captura.jinja2", error="Error del sistema: Esta oficina no tiene unidad de turnos asignada")
         resultado, mensaje = _crear_turno(cit_cita)
