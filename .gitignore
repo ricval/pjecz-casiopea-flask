@@ -19,12 +19,14 @@
 poetry.lock
 uv.lock
 
+/tests/*.json
+
 __pycache__/
 *.egg-info/
 
 /.idea/
 /.venv/
-/seed/
 /venv/
+/seed/
 
 gclouddeploy.sh

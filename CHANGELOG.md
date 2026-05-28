@@ -7,6 +7,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Para _Test_ se añadió un archivo `*.json` en el directorio `test`. Pero se añadió en el archivo `.gitignore` que no suba los archivos de prueba, solo los ejemplos.
 - Creada prueba de conexión con el sistema de turnos.
 - Crear servicio de turnos. Conexión con la API del sistema de turnos. 
 - Añadida página de pruebas.
