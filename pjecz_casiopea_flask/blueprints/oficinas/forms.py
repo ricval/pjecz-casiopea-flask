@@ -22,6 +22,7 @@ class OficinaForm(FlaskForm):
     apertura = TimeField("Horario de apertura", validators=[DataRequired()], format="%H:%M")
     cierre = TimeField("Horario de cierre", validators=[DataRequired()], format="%H:%M")
     limite_personas = IntegerField("Límite de personas", validators=[DataRequired()])
+    turnos_unidad_id = IntegerField("Unidad ID (Sistema de Turnos)", validators=[Optional()])
     es_jurisdiccional = BooleanField("Es Jurisdiccional", validators=[Optional()])
     puede_agendar_citas = BooleanField("Puede agendar citas", validators=[Optional()])
     puede_enviar_qr = BooleanField("Puede enviar códigos QR", validators=[Optional()])

@@ -7,6 +7,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Añadir campo `unidad id - Turnos` en el formulario del módulo `oficina`. Para poder hacer un entendimiento entre el sistema de citas y el de turnos.
 - Para _Test_ se añadió un archivo `*.json` en el directorio `test`. Pero se añadió en el archivo `.gitignore` que no suba los archivos de prueba, solo los ejemplos.
 - Creada prueba de conexión con el sistema de turnos.
 - Crear servicio de turnos. Conexión con la API del sistema de turnos. 
