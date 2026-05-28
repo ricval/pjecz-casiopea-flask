@@ -19,6 +19,7 @@
 poetry.lock
 uv.lock
 
+# Ignorar archivos de prueba
 /tests/*.json
 
 __pycache__/
