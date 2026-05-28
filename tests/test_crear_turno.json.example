@@ -2,5 +2,6 @@
     "usuario_id": 2,
     "turno_tipo_id": 2,
     "turno_telefono": "",
-    "unidad_id": 2
+    "unidad_id": 2,
+    "comentarios": "PRUEBA",
 }

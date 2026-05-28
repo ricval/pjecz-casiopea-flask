@@ -75,9 +75,13 @@
         {% if current_user.can_admin('CIT CITAS') and cit_cita.codigo_acceso_url %}
             {{ detail.label_value('Código asistencia', cit_cita.codigo_asistencia) }}
         {% endif %}
+        {{ detail.label_value('Turno código', cit_cita.turno) }}
+        {{ detail.label_value('Turno ID', cit_cita.turno_id) }}
+        {% if cit_cita.codigo_acceso_url %}
         <div class="text-center">
             <img src="{{ cit_cita.codigo_acceso_url }}" alt="QR Code" class="img-fluid" style="max-width: 200px;">
         </div>
+        {% endif %}
     {% endcall %}
 {% endblock %}
 

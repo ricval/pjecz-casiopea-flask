@@ -31,14 +31,37 @@ class Turnos():
         self._turno_id = 0
         self._turno_codigo = ""
     
-    def crear_turno(self):
+    def crear_turno(self, payload_json: json) -> Tuple[bool, str]:
         """
         Crea un nuevo turno en el sistema de turnos con el tipo cita.
         :return ID del turno y el código del turno generado.
         """
 
-        self.turno_id = 444;
-        self.turno_codigo = "OCP-102"
+        url = f"{self._settings.TURNOS_API_KEY_URL}/crear_turno"
+        headers = {
+            "X-API-KEY": self._settings.TURNOS_API_KEY,
+            "Content-Type": "application/json",
+        }
+
+        try:
+            response = requests.post(url, headers=headers, data=payload_json, timeout=5)
+            response.raise_for_status()
+
+            try:
+                data = response.json()
+                if "success" in data and "message" in data:
+                    self._turno_id = data["data"]["turno_id"];
+                    self._turno_codigo = f'{data["data"]["unidad"]["clave"]}-{data["data"]["turno_numero"]}'
+                    return data["success"], data["message"]
+                return False, "Respuesta JSON inválida desde el servidor de turnos."
+
+            except JSONDecodeError:
+                return False, "No se pudo decodificar la respuesta JSON del servidor de turnos."
+
+        except RequestException as e:
+            return False, f"Error de conexión con el sistema de turnos: {e}"
+        except Exception as e:
+            return False, f"Ocurrió un error inesperado: {e}"
 
     def get_turno_id(self) -> int:
         """Entrega el ID del turno generado"""
