@@ -1,83 +1,157 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Captura de Asistencia</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
-    <!-- Material Design Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
-    
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden; /* Evita barras de scroll */
-        }
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8f9fa;
-        }
-        .capture-container {
-            text-align: center;
-            width: 100%;
-            max-width: 800px; /* Ancho máximo del contenedor */
-            padding: 20px;
-        }
-        .barcode-input {
-            font-size: 2.5rem; /* Tamaño de fuente más grande */
-            text-align: center;
-            height: auto;
-            padding: 0.75rem 1.25rem;
-        }
-        .action-buttons {
-            position: fixed;
-            bottom: 1rem;
-            left: 1rem;
-        }
-        .action-buttons .btn {
-            color: #adb5bd; /* Color de icono gris claro */
-            background-color: transparent;
-            border: none;
-            font-size: 1.5rem; /* Tamaño de icono */
-            padding: 0.25rem 0.5rem;
-        }
-        .action-buttons .btn:hover,
-        .action-buttons .btn:focus {
-            color: #495057; /* Color más oscuro al pasar el mouse o enfocar */
-            box-shadow: none;
-        }
-        .modal-title {
-            font-size: 1.75rem;
-        }
-        .modal-body p {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-        }
-        .modal-body .turno-display {
-            font-size: 5rem;
-            font-weight: bold;
-            color: var(--bs-primary);
-            line-height: 1;
-        }
-    </style>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SAJI Citas — Control de Acceso</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        {# Si tienes un CSS propio puedes conservarlo: #}
+        <link href="{{ url_for('static', filename='/css/escaner_citas.css') }}" rel="stylesheet">
+    </head>
+    <body>
 
-    <div class="capture-container">
-        <h2 class="mb-4 text-secondary">Escanee su código de barras de asistencia</h2>
-        <form action="{{ url_for('cit_citas_turnos.captura') }}" method="post" id="barcode-form" role="form" autocomplete="off">
-            <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
-            <input type="text" class="form-control barcode-input" id="barcode" name="barcode" autofocus>
-        </form>
+    <div class="wrap">
+        <div class="pj-header">
+            <div class="pj-logo">
+                <img src="https://citas.saji.gob.mx/images/logo_navbar.png" alt="SAJI Citas" />
+            </div>
+        </div>
+
+        <div class="pj-body">
+        <!-- PANEL IZQUIERDO: Formulario de escaneo -->
+            <div class="pj-left">
+                <div class="section-lbl">Confirme su cita</div>
+
+                {% if cit_cita %}
+                <div class="scanner-area ok" id="scanZone">
+                    <div class="scan-icon ok" id="scanIcWrap">
+                    <i class="ti ti-check" id="scanIco"></i>
+                    </div>
+                    <div class="scanner-label" id="scanLabel">Cita verificada</div>
+                </div>
+                {% elif error %}
+                <div class="scanner-area err" id="scanZone">
+                    <div class="scan-icon err" id="scanIcWrap">
+                    <i class="ti ti-alert-triangle" id="scanIco"></i>
+                    </div>
+                    <div class="scanner-label" id="scanLabel">Código no válido</div>
+                </div>
+                {% else %}
+                <div class="scanner-area" id="scanZone">
+                    <div class="scan-icon" id="scanIcWrap">
+                    <i class="ti ti-barcode" id="scanIco"></i>
+                    </div>
+                    <div class="scanner-label" id="scanLabel">
+                        Escanee el código de barras
+                        <br>
+                        <p class="pj-sub">Apunte la pistola lectora al código de su cita</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Formulario que envía el barcode al servidor (Flask) -->
+                <form action="{{ url_for('cit_citas_turnos.captura') }}" method="post" id="barcode-form" autocomplete="off">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+                    <!-- El input es invisible; la pistola lectora lo llena y hace submit automático -->
+                    <input type="text" class="hidden-input" id="barcode" name="barcode" />
+                </form>
+
+                <div class="progress-wrap" id="progressWrap">
+                    <div class="progress-track">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: Información de la cita -->
+            <div class="pj-right">
+                <div class="section-lbl">Información de la cita</div>
+
+                <div id="citaContent" style="height: calc(100% - 22px);">
+
+                    {% if cit_cita %}
+                    {# ── CITA ENCONTRADA ── #}
+                    <div class="cita-card">
+                        <div class="cita-top">
+                            <div class="cita-folio">{{ cit_cita.clave }}</div>
+                            <span class="badge ok">
+                                <i class="ti ti-circle-check" style="font-size:11px;"></i>
+                                CONFIRMADA
+                            </span>
+                        </div>
+
+                        <div class="persona-row">
+                            {# Iniciales del cliente #}
+                            {% set palabras = cit_cita.cit_cliente.nombre.split() %}
+                            {% set iniciales = (palabras[0][0] if palabras|length > 0 else '') + (palabras[1][0] if palabras|length > 1 else '') %}
+                            <div class="avatar">{{ iniciales | upper }}</div>
+                            <div>
+                                <div class="persona-name">{{ cit_cita.cit_cliente.nombre }}</div>
+                                <div class="persona-sub">{{ cit_cita.cit_cliente.telefono if cit_cita.cit_cliente.curp else cit_cita.cit_cliente.email }}</div>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="ifield">
+                            <div class="ifield-lbl">Tipo de servicio</div>
+                            <div class="ifield-val">{{ cit_cita.cit_servicio.descripcion }}</div>
+                        </div>
+
+                        <div class="ifield">
+                            <div class="ifield-lbl">Clave de servicio</div>
+                            <div class="ifield-val">{{ cit_cita.cit_servicio.clave }}</div>
+                        </div>
+
+                        <div class="unidad-block">
+                            <i class="ti ti-building-bank"></i>
+                            <div>
+                                <div class="unidad-name">{{ cit_cita.oficina.clave }}</div>
+                                <div class="unidad-sub">{{ cit_cita.oficina.descripcion_corta }}</div>
+                            </div>
+                        </div>
+
+                        {% if cit_cita.turno %}
+                        <div class="turno-block">
+                            <div>
+                                <div class="turno-lbl">Turno asignado</div>
+                                <div class="turno-num">{{ cit_cita.turno }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% elif error %}
+                    {# ── ERROR ── #}
+                    <div class="error-block">
+                        <i class="ti ti-alert-circle"></i>
+                        <p>{{ error }}</p>
+                    </div>
+
+                    {% else %}
+                    {# ── ESTADO INICIAL ── #}
+                    <div class="cita-empty">
+                        <i class="ti ti-qrcode"></i>
+                        <p>Escanee el código de barras<br>para ver la información de la cita</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+        <a href="{{ url_for('cit_citas_turnos.config', paso_id=1) }}" title="Configuración">
+            <i class="ti ti-settings"></i>
+        </a>
+        <a href="{{ url_for('cit_citas_turnos.tests') }}" title="Test">
+            <i class="ti ti-check"></i>
+        </a>
     </div>
 
-    <div class="action-buttons">
         <button type="button" class="btn" title="Configuración">
             <a href="{{ url_for('cit_citas_turnos.config', paso_id=1) }}"><i class="mdi mdi-cog"></i></a>
         </button>
@@ -128,30 +202,76 @@
 
     {% if cit_cita or error %}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Busca el modal de éxito o el de error que esté presente en el DOM
-            const modalEl = document.getElementById('successModal') || document.getElementById('dangerModal');
-            
-            if (modalEl) {
-                const modal = new bootstrap.Modal(modalEl);
-                
-                // Mostrar el modal
-                modal.show();
+        /**
+        * SAJI Citas — Pantalla de validación de acceso
+        * El formulario siempre envía al servidor (Flask maneja la lógica).
+        * Aquí solo controlamos el foco y el auto-submit de la pistola lectora.
+        */
 
-                // Ocultar el modal después de 3 segundos
-                setTimeout(function() {
-                    modal.hide();
-                }, 3000);
+        const RESET_SECS = 10;
 
-                // Limpiar y enfocar el input cuando el modal se oculte
-                modalEl.addEventListener('hidden.bs.modal', function () {
-                    const barcodeInput = document.getElementById('barcode');
-                    barcodeInput.value = '';
-                    barcodeInput.focus();
-                });
+        const inp   = document.getElementById('barcode');
+        const form  = document.getElementById('barcode-form');
+        const zone  = document.getElementById('scanZone');
+        const icWrap = document.getElementById('scanIcWrap');
+        const ico   = document.getElementById('scanIco');
+        const label = document.getElementById('scanLabel');
+
+        // Mantener foco en el input invisible siempre
+        inp.focus();
+        document.addEventListener('click', () => inp.focus());
+
+        let scanDebounce = null;
+
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                clearTimeout(scanDebounce);
+                const val = inp.value.trim().toUpperCase();
+                if (!val) return;
+                form.submit(); // siempre va al servidor
             }
         });
+
+        inp.addEventListener('input', () => {
+            if (!inp.value.trim()) return;
+            clearTimeout(scanDebounce);
+            setZone('active', '', 'ti-scan');
+            label.textContent = 'Leyendo código...';
+
+            scanDebounce = setTimeout(() => {
+                form.submit(); // siempre va al servidor
+            }, 200);
+        });
+
+        // Si hay un resultado (cit_cita o error), iniciar barra de progreso
+        // y reiniciar la pantalla tras RESET_SECS segundos
+        {% if cit_cita or error %}
+        startProgress();
+        {% endif %}
+
+        function startProgress() {
+            const wrap = document.getElementById('progressWrap');
+            const bar  = document.getElementById('progressBar');
+            wrap.classList.add('visible');
+            bar.style.transition = 'none';
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.transition = `width ${RESET_SECS}s linear`;
+                bar.style.width = '0%';
+            }, 30);
+            setTimeout(reset, RESET_SECS * 1000);
+        }
+
+        function reset() {
+            // Redirige a la misma URL sin parámetros para limpiar el resultado
+            window.location.href = window.location.pathname;
+        }
+
+        function setZone(zoneClass, icClass, icoClass) {
+            zone.className    = 'scanner-area ' + zoneClass;
+            icWrap.className  = 'scan-icon ' + icClass;
+            ico.className     = 'ti ' + icoClass;
+        }
     </script>
-    {% endif %}
-</body>
+    </body>
 </html>

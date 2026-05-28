@@ -1,0 +1,219 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.wrap {
+    background: #f5f5f5;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 0.5px solid #e0e0e0;
+    width: 100%;
+    max-width: 900px;
+}
+
+.pj-header {
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+}
+.pj-logo img { height: 40px; display: block; }
+
+.pj-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 520px;
+}
+
+.pj-left {
+    padding: 28px 24px;
+    border-right: 0.5px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #fff;
+}
+
+.pj-right {
+    padding: 28px 24px;
+    background: #fafafa;
+}
+
+.section-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: #999;
+    margin-bottom: 8px;
+}
+.pj-sub {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 44px;
+}
+/* SCANNER */
+.scanner-area {
+    border: 1.5px dashed #ccc;
+    border-radius: 12px;
+    padding: 64px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+    transition: all .2s;
+}
+.scanner-area.active { border-color: #111; border-style: solid; background: rgba(0,0,0,.03); }
+.scanner-area.ok     { border-color: #1d9e75; border-style: solid; background: rgba(29,158,117,.04); }
+.scanner-area.err    { border-color: #d85a30; border-style: solid; background: rgba(216,90,48,.04); }
+
+.scan-icon {
+    width: 80px; height: 80px;
+    border-radius: 18px;
+    background: #f0f0f0;
+    display: flex; align-items: center; justify-content: center;
+}
+.scan-icon i { font-size: 40px; color: #555; }
+.scan-icon.ok  { background: #eafaf4; }
+.scan-icon.ok i  { color: #1d9e75; }
+.scan-icon.err { background: #fdf0eb; }
+.scan-icon.err i { color: #d85a30; }
+
+.scanner-label { font-size: 14px; font-weight: 600; color: #111; }
+
+/* Input invisible para pistola lectora */
+.hidden-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 1px; height: 1px;
+}
+
+/* PROGRESS */
+.progress-wrap { display: none; }
+.progress-wrap.visible { display: block; }
+.progress-track {
+    width: 100%; height: 4px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    background: #111;
+    border-radius: 4px;
+    width: 100%;
+    transition: width linear;
+}
+
+/* CITA */
+.cita-empty {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px; height: 100%;
+    color: #bbb; text-align: center;
+}
+.cita-empty i { font-size: 40px; }
+.cita-empty p { font-size: 13px; }
+
+.cita-card {
+    display: flex; flex-direction: column; gap: 14px;
+    animation: fi .3s ease;
+}
+@keyframes fi {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.cita-top { display: flex; align-items: center; justify-content: space-between; }
+.cita-folio { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #999; }
+
+.badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 4px;
+    font-size: 11px; font-weight: 700; letter-spacing: .3px;
+}
+.badge.ok   { background: #111; color: #fff; }
+.badge.err  { background: #fdf0eb; color: #d85a30; }
+
+.persona-row { display: flex; align-items: center; gap: 10px; }
+.avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #111; color: #fff;
+    font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.persona-name  { font-size: 15px; font-weight: 600; color: #111; }
+.persona-sub   { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #999; }
+
+.divider { height: 0.5px; background: #e8e8e8; }
+
+.ifield {
+    background: #fff;
+    border: 0.5px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 9px 12px;
+}
+.ifield-lbl { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+.ifield-val { font-size: 12px; font-weight: 500; color: #111; }
+
+.unidad-block {
+    display: flex; align-items: center; gap: 10px;
+    border: 0.5px solid #e8e8e8;
+    background: #fff;
+    border-radius: 8px;
+    padding: 11px 14px;
+}
+.unidad-block i { font-size: 18px; color: #888; }
+.unidad-name { font-size: 13px; font-weight: 600; color: #111; text-transform: uppercase; }
+.unidad-sub  { font-size: 11px; color: #999; }
+
+.turno-block {
+    display: flex; align-items: center; justify-content: center;
+    border: 0.5px solid #e8e8e8;
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px 16px;
+}
+.turno-lbl { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; text-align: center; }
+.turno-num { font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700; color: #111; line-height: 1; text-align: center; }
+
+.error-block {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; height: 100%; text-align: center;
+}
+.error-block i { font-size: 40px; color: #d85a30; }
+.error-block p { font-size: 14px; font-weight: 600; color: #d85a30; }
+
+/* Botones de acción (esquina inferior izquierda) */
+.action-buttons {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    display: flex;
+    gap: 4px;
+}
+.action-buttons a {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 8px;
+    color: #adb5bd;
+    font-size: 20px;
+    text-decoration: none;
+    transition: color .15s, background .15s;
+}
+.action-buttons a:hover { color: #495057; background: rgba(0,0,0,.05); }
