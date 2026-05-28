@@ -54,6 +54,7 @@ def captura():
             return render_template("cit_citas_turnos/captura.jinja2", error=f"Error en sistema de turnos: {mensaje}")
         # Añadir asistencia
         cit_cita.asistencia = True
+        cit_cita.estado = "ASISTIO"
         cit_cita.save()
         return render_template("cit_citas_turnos/captura.jinja2", cit_cita=cit_cita)
 
