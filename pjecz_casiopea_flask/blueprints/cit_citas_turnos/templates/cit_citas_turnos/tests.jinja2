@@ -33,14 +33,12 @@
                                         type="button"
                                         id="btn-test-conexion"
                                         class="btn btn-outline-primary"
-                                        hx-get="{{ url_for('cit_citas_turnos.test_conexion') }}"
-                                        hx-target="#status-conexion"
+                                        hx-get="{{ url_for('cit_citas_turnos.test_conexion') }}" 
+                                        hx-target="#test-results" hx-swap="innerHTML"
                                         >
                                             <span class="mdi mdi-play"></span> Probar</button>
                                 </div>
-                                <div id="status-conexion" class="text-start" style="width: 110px;">
-                                    <span class="text-secondary"><i class="mdi mdi-checkbox-blank-circle-outline"></i> Sin Probar</span>
-                                </div>
+                                <div id="status-conexion" hx-swap-oob="true"><span class="text-secondary"><i class="mdi mdi-checkbox-blank-circle-outline"></i> Sin Probar</span></div>
                             </div>
 
                             <!-- Prueba de Creación de Turno -->
@@ -53,13 +51,17 @@
                                         type="button"
                                         id="btn-test-turno"
                                         class="btn btn-outline-primary"
-                                        hx-get="{{ url_for('cit_citas_turnos.test_turno') }}"
-                                        hx-target="#status-turno"
+                                        hx-get="{{ url_for('cit_citas_turnos.test_turno') }}" 
+                                        hx-target="#test-results" hx-swap="innerHTML"
                                         >
-                                            <span class="mdi mdi-play"></span> Probar</button>
+                                            <i class="mdi mdi-play"></i> Probar</button>
                                 </div>
-                                <div id="status-turno" class="text-start" style="width: 110px;">
-                                    <span class="text-secondary"><i class="mdi mdi-checkbox-blank-circle-outline"></i> Sin Probar</span>
+                                <div id="status-turno" hx-swap-oob="true"><span class="text-secondary"><i class="mdi mdi-checkbox-blank-circle-outline"></i> Sin Probar</span></div>
+                            </div>
+                            <!-- Contenedor para mostrar el resultado de la prueba -->
+                            <div class="mt-4">
+                                <div id="test-results" class="alert alert-secondary" role="alert">
+                                    Aquí se mostrará el resultado de la prueba.
                                 </div>
                             </div>
                         </div>

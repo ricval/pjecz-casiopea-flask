@@ -7,6 +7,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Validación de cita. Solo permitir que se acceda el mismo día de la cita.
+- Crear llamado a la API-KEY del sistema Tauro (Turnos) para crear un turnos y recibirlo y guardarlo en la cita.
+- Mostrar el campo `telefono` del cliente en el módulo `cit_citas_turnos` en su captura del código de barras de asistencia.
+- Añadir campo `unidad id - Turnos` en el formulario del módulo `oficina`. Para poder hacer un entendimiento entre el sistema de citas y el de turnos.
+- Para _Test_ se añadió un archivo `*.json` en el directorio `test`. Pero se añadió en el archivo `.gitignore` que no suba los archivos de prueba, solo los ejemplos.
 - Creada prueba de conexión con el sistema de turnos.
 - Crear servicio de turnos. Conexión con la API del sistema de turnos. 
 - Añadida página de pruebas.
@@ -25,6 +30,8 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Variables de entorno:
     - `TURNOS_API_KEY`: Es la API-Key para comunicarse con el sistema de turnos.
     - `TURNOS_API_KEY_URL`: Es la URL que se utiliza para comunicarse con el sistema de turnos.
+    - `TURNOS_USUARIO_ID`: Es la ID del usuario que se utiliza para comunicarse con el sistema de turnos.
+    - `TURNOS_TIPO_ID`: Es la ID del tipo de turno en nuestro caso sería del tipo "CON_CITA".
 
 - Archivo de prueba:
     - `test_crear_turno.json`
