@@ -146,6 +146,7 @@ def new():
             apertura=form.apertura.data,
             cierre=form.cierre.data,
             limite_personas=form.limite_personas.data,
+            turnos_unidad_id=form.turnos_unidad_id.data,
             es_jurisdiccional=form.es_jurisdiccional.data,
             puede_agendar_citas=form.puede_agendar_citas.data,
             puede_enviar_qr=form.puede_enviar_qr.data,
@@ -192,6 +193,7 @@ def edit(oficina_id):
             oficina.apertura = form.apertura.data
             oficina.cierre = form.cierre.data
             oficina.limite_personas = form.limite_personas.data
+            oficina.turnos_unidad_id = form.turnos_unidad_id.data
             oficina.es_jurisdiccional = form.es_jurisdiccional.data
             oficina.puede_agendar_citas = form.puede_agendar_citas.data
             oficina.puede_enviar_qr = form.puede_enviar_qr.data
@@ -214,6 +216,7 @@ def edit(oficina_id):
     form.apertura.data = oficina.apertura
     form.cierre.data = oficina.cierre
     form.limite_personas.data = oficina.limite_personas
+    form.turnos_unidad_id.data = oficina.turnos_unidad_id
     form.es_jurisdiccional.data = oficina.es_jurisdiccional
     form.puede_agendar_citas.data = oficina.puede_agendar_citas
     form.puede_enviar_qr.data = oficina.puede_enviar_qr

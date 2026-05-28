@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     TZ: str = os.getenv("TZ", "America/Mexico_City")
     TURNOS_API_KEY: str = os.getenv("TURNOS_API_KEY", "")
     TURNOS_API_KEY_URL: str = os.getenv("TURNOS_API_KEY_URL", "")
+    TURNOS_USUARIO_ID: int = os.getenv("TURNOS_USUARIO_ID", 0)
+    TURNOS_TIPO_ID: int = os.getenv("TURNOS_TIPO_ID", 0)
 
     # Incrementar el tamaño de lo que se sube en los formularios
     MAX_CONTENT_LENGTH: int | None = None

@@ -45,25 +45,48 @@ def captura():
         cit_cita = CitCita.query.filter_by(codigo_barras=codigo_barras).first()
         if cit_cita is None:
             return render_template("cit_citas_turnos/captura.jinja2", error="¡Su código de barras ya no es válido!")
-        # if cit_cita.oficina.turnos_unidad_id is None:
-        #     return render_template("cit_citas_turnos/captura.jinja2", error="Error del sistema: Esta oficina no tiene unidad de turnos asignada")
-        if cit_cita.turno is None:
-            turno_id, turno = _crear_turno(cit_cita.oficina.turnos_unidad_id)
-            cit_cita.turno_id = turno_id
-            cit_cita.turno = turno
-            # cit_cita.save()
+        if cit_cita.turno:
+            return render_template("cit_citas_turnos/captura.jinja2", cit_cita=cit_cita)
+        if cit_cita.oficina.turnos_unidad_id is None:
+            return render_template("cit_citas_turnos/captura.jinja2", error="Error del sistema: Esta oficina no tiene unidad de turnos asignada")
+        resultado, mensaje = _crear_turno(cit_cita)
+        if resultado == False:
+            return render_template("cit_citas_turnos/captura.jinja2", error=f"Error en sistema de turnos: {mensaje}")
+        # Añadir asistencia
+        cit_cita.asistencia = True
+        cit_cita.estado = "ASISTIO"
+        cit_cita.save()
         return render_template("cit_citas_turnos/captura.jinja2", cit_cita=cit_cita)
 
     return render_template("cit_citas_turnos/captura.jinja2")
 
 
-def _crear_turno(unidad_id: int)-> Tuple[int, str]:
+def _crear_turno(cit_cita: CitCita) -> Tuple[bool, str]:
     """
     Crea un nuevo turno en el sistema de turnos
     :return El id del turno generado y el número de turno compuesto.
     """
 
-    return (418, f"OCP-{1}")
+    settings = get_settings()
+
+    payload = {
+        "usuario_id": settings.TURNOS_USUARIO_ID,
+        "turno_tipo_id": settings.TURNOS_TIPO_ID,
+        "turno_telefono": cit_cita.cit_cliente.telefono,
+        "unidad_id": cit_cita.oficina.turnos_unidad_id,
+        "comentarios": cit_cita.notas,
+    }
+    payload_json = json.dumps(payload)
+
+    turnos = Turnos(settings)
+    resultado, mensaje = turnos.crear_turno(payload_json)
+
+    if resultado:
+        cit_cita.turno_id = turnos.get_turno_id()
+        cit_cita.turno = turnos.get_turno_codigo()
+        cit_cita.save()
+
+    return resultado, mensaje
 
 
 @cit_citas_turnos.route("/cit_citas_turnos/config/<int:paso_id>", methods=["GET"])
@@ -142,9 +165,15 @@ def test_conexion():
     resultado, mensaje = turnos.test_conexion()
 
     if resultado:
-        return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
+        status_html = '<div id="status-conexion" hx-swap-oob="true"><span class="text-success"><i class="mdi mdi-check-circle"></i> Éxito</span></div>'
+        result_html = '<div class="alert alert-success" role="alert">¡Conexión exitosa!</div>'
+        return render_template_string(status_html + result_html)
 
-    return render_template_string(f'<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span><p>{mensaje}</p>')
+    status_html = '<div id="status-conexion" hx-swap-oob="true"><span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span></div>'
+    result_html = f'''<div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error de Conexión</h4><p>{mensaje}</p>
+                      </div>'''
+    return render_template_string(status_html + result_html)
 
 
 @cit_citas_turnos.route("/cit_citas_turnos/tests/turno", methods=["GET"])
@@ -162,6 +191,12 @@ def test_turno():
     resultado, mensaje = turnos.test_crear_turno(test_payload)
 
     if resultado:
-        return render_template_string('<span class="text-success"><i class="mdi mdi-check-circle"></i> Todo bien</span>')
+        status_html = '<div id="status-turno" hx-swap-oob="true"><span class="text-success"><i class="mdi mdi-check-circle"></i> Éxito</span></div>'
+        result_html = f'<div class="alert alert-success" role="alert">{mensaje}</div>'
+        return render_template_string(status_html + result_html)
 
-    return render_template_string(f'<span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span><p>{mensaje}</p>')
+    status_html = '<div id="status-turno" hx-swap-oob="true"><span class="text-danger"><i class="mdi mdi-close-circle"></i> Falló</span></div>'
+    result_html = f'''<div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error al Crear Turno</h4><p>{mensaje}</p>
+                      </div>'''
+    return render_template_string(status_html + result_html)

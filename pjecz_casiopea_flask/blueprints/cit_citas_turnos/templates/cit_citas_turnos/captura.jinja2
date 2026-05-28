@@ -81,7 +81,7 @@
         <button type="button" class="btn" title="Configuración">
             <a href="{{ url_for('cit_citas_turnos.config', paso_id=1) }}"><i class="mdi mdi-cog"></i></a>
         </button>
-        <button type="submit" form="barcode-form" class="btn" title="Test">
+        <button type="submit" class="btn" title="Test">
             <a href="{{ url_for('cit_citas_turnos.tests') }}"><i class="mdi mdi-check"></i></a>
         </button>
     </div>
@@ -97,6 +97,7 @@
                 </div>
                 <div class="modal-body text-center py-5">
                     <p>Cliente: <strong>{{ cit_cita.cit_cliente.nombre }}</strong></p>
+                    <p>Teléfono: <strong>{{ cit_cita.cit_cliente.telefono }}</strong></p>
                     <p>Oficina: <strong>{{ cit_cita.oficina.clave }} - {{ cit_cita.oficina.descripcion_corta }}</strong></p>
                     <p>Servicio: <strong>{{ cit_cita.cit_servicio.clave }} - {{ cit_cita.cit_servicio.descripcion }}</strong></p>
                     <p class="mt-4">Su turno es:</p>
