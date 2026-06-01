@@ -51,7 +51,7 @@ body {
 }
 
 .section-lbl {
-    font-size: 10px;
+    font-size: 18px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .8px;
@@ -128,7 +128,7 @@ body {
     color: #bbb; text-align: center;
 }
 .cita-empty i { font-size: 40px; }
-.cita-empty p { font-size: 13px; }
+.cita-empty p { font-size: 18px; }
 
 .cita-card {
     display: flex; flex-direction: column; gap: 14px;
@@ -140,12 +140,12 @@ body {
 }
 
 .cita-top { display: flex; align-items: center; justify-content: space-between; }
-.cita-folio { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #999; }
+.cita-folio { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: #999; }
 
 .badge {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 3px 10px; border-radius: 4px;
-    font-size: 11px; font-weight: 700; letter-spacing: .3px;
+    font-size: 18px; font-weight: 700; letter-spacing: .3px;
 }
 .badge.ok   { background: #111; color: #fff; }
 .badge.err  { background: #fdf0eb; color: #d85a30; }
@@ -158,8 +158,8 @@ body {
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
 }
-.persona-name  { font-size: 15px; font-weight: 600; color: #111; }
-.persona-sub   { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #999; }
+.persona-name  { font-size: 18px; font-weight: 600; color: #111; }
+.persona-sub   { font-size: 16px; font-family: 'JetBrains Mono', monospace; color: #999; }
 
 .divider { height: 0.5px; background: #e8e8e8; }
 
@@ -169,8 +169,8 @@ body {
     border-radius: 8px;
     padding: 9px 12px;
 }
-.ifield-lbl { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
-.ifield-val { font-size: 12px; font-weight: 500; color: #111; }
+.ifield-lbl { font-size: 16px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+.ifield-val { font-size: 18px; font-weight: 500; color: #111; }
 
 .unidad-block {
     display: flex; align-items: center; gap: 10px;
@@ -179,9 +179,9 @@ body {
     border-radius: 8px;
     padding: 11px 14px;
 }
-.unidad-block i { font-size: 18px; color: #888; }
-.unidad-name { font-size: 13px; font-weight: 600; color: #111; text-transform: uppercase; }
-.unidad-sub  { font-size: 11px; color: #999; }
+.unidad-block i { font-size: 22px; color: #888; }
+.unidad-name { font-size: 18px; font-weight: 600; color: #111; text-transform: uppercase; }
+.unidad-sub  { font-size: 16px; color: #999; text-transform: uppercase; }
 
 .turno-block {
     display: flex; align-items: center; justify-content: center;
@@ -190,7 +190,7 @@ body {
     border-radius: 8px;
     padding: 14px 16px;
 }
-.turno-lbl { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; text-align: center; }
+.turno-lbl { font-size: 18px; color: #999; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; text-align: center; }
 .turno-num { font-family: 'JetBrains Mono', monospace; font-size: 48px; font-weight: 700; color: #111; line-height: 1; text-align: center; }
 
 .error-block {
