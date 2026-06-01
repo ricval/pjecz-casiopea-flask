@@ -85,29 +85,30 @@
                             <div class="avatar">{{ iniciales | upper }}</div>
                             <div>
                                 <div class="persona-name">{{ cit_cita.cit_cliente.nombre }}</div>
-                                <div class="persona-sub">{{ cit_cita.cit_cliente.telefono if cit_cita.cit_cliente.telefono else cit_cita.cit_cliente.email }}</div>
+                                {# <div class="persona-sub">{{ cit_cita.cit_cliente.telefono if cit_cita.cit_cliente.telefono else cit_cita.cit_cliente.email }}</div> #}
                             </div>
                         </div>
 
                         <div class="divider"></div>
 
                         <div class="ifield">
-                            <div class="ifield-lbl">Tipo de servicio</div>
-                            <div class="ifield-val">{{ cit_cita.cit_servicio.descripcion }}</div>
-                        </div>
-
-                        <div class="ifield">
-                            <div class="ifield-lbl">Clave de servicio</div>
-                            <div class="ifield-val">{{ cit_cita.cit_servicio.clave }}</div>
+                            <div class="ifield-lbl">Teléfono de contacto</div>
+                            <div class="ifield-val">{{ cit_cita.cit_cliente.telefono }}</div>
                         </div>
 
                         <div class="unidad-block">
                             <i class="ti ti-building-bank"></i>
                             <div>
-                                <div class="unidad-name">{{ cit_cita.oficina.clave }}</div>
-                                <div class="unidad-sub">{{ cit_cita.oficina.descripcion_corta }}</div>
+                                <div class="unidad-sub">Unidad</div>
+                                <div class="unidad-name">{{ cit_cita.oficina.descripcion_corta }}</div>
                             </div>
                         </div>
+                        
+                        <div class="ifield">
+                            <div class="ifield-lbl">Tipo de servicio</div>
+                            <div class="ifield-val">{{ cit_cita.cit_servicio.descripcion }}</div>
+                        </div>
+
 
                         {% if cit_cita.turno %}
                         <div class="turno-block">
@@ -194,7 +195,7 @@
                 bar.style.transition = `width ${RESET_SECS}s linear`;
                 bar.style.width = '0%';
             }, 30);
-            setTimeout(reset, RESET_SECS * 5000);
+            setTimeout(reset, RESET_SECS * 1000);
         }
 
         function reset() {
