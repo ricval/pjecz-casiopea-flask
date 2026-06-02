@@ -3,11 +3,17 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.5.1] - 2026-06-02
+
+### 🐞 Arreglado
+
+- En el detalle de una `categorías` no se mostraba bien su listado de servicios.
+
+
 ## [1.5.0] - 2026-05-29
 
 ### ✨ Mejoras
 
-- Diseño de la página de captura - código de barras.
 - Validación de cita. Solo permitir que se acceda el mismo día de la cita.
 - Crear llamado a la API-KEY del sistema Tauro (Turnos) para crear un turnos y recibirlo y guardarlo en la cita.
 - Mostrar el campo `telefono` del cliente en el módulo `cit_citas_turnos` en su captura del código de barras de asistencia.
