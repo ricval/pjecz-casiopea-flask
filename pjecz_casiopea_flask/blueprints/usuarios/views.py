@@ -74,7 +74,7 @@ def login():
         return render_template(
             "usuarios/login.jinja2",
             form=form,
-            title="Plataforma Lira",
+            title="Plataforma Casiopea",
             firebase_settings=firebase_settings,
         )
     else:
