@@ -58,7 +58,6 @@
                         <th>Duración</th>
                         <th>Desde</th>
                         <th>Hasta</th>
-                        <th>Dias Hab.</th>
                         <th>Activo</th>
                     </tr>
                 </thead>
@@ -92,8 +91,6 @@
                 { data: 'duracion' },
                 { data: 'desde' },
                 { data: 'hasta' },
-                { data: 'dias_habilitados' },
-                { data: 'cit_categoria' },
                 { data: 'toggle_es_activo' }
             ];
             configDTCitServicios['columnDefs'] = [
@@ -105,7 +102,7 @@
                     }
                 },
                 {
-                    targets: 6, // toggle_es_activo
+                    targets: 5, // toggle_es_activo
                     data: null,
                     render: function(data, type, row, meta) {
                         if (data.url === '') {
