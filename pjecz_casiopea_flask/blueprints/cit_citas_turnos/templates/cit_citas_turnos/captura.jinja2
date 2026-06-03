@@ -12,12 +12,15 @@
     </head>
     <body>
 
+    <!-- TOP BAR -->
     <div class="wrap">
-        <div class="pj-header">
-            <div class="pj-logo">
-                <img src="https://citas.saji.gob.mx/images/logo_navbar.png" alt="SAJI Citas" />
-            </div>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="https://citas.saji.gob.mx/images/logo_navbar.png" alt="SAJI Citas" class="topbar-logo-img"/>
         </div>
+        <div class="topbar-clock" id="clock">--:--:--</div>
+    </div>
 
         <div class="pj-body">
 
@@ -252,6 +255,13 @@
             icWrap.className = 'scan-icon ' + icClass;
             ico.className    = 'ti ' + icoClass;
         }
+        // ─── CLOCK ───────────────────────────────────────────────────────
+        function updateClock() {
+        document.getElementById("clock").textContent =
+            new Date().toLocaleTimeString("es-MX");
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
 
     </body>
