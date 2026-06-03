@@ -112,6 +112,62 @@ body {
     width: 1px; height: 1px;
 }
 
+/* TOP BAR */
+.topbar {
+    width: 100%;
+    background: white;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 56px;
+    flex-shrink: 0;
+
+    /* estilo tipo AppBar */
+    border-bottom: 3px solid rgba(10, 25, 45, 0.8);
+    box-shadow: none;
+}
+
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.topbar-logo {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--black);
+}
+
+.topbar-logo-img {
+    height: 66px;
+    width: auto;
+    object-fit: contain;
+}
+
+.topbar-sub {
+    font-size: 12px;
+    color: #5f6b7a;
+    letter-spacing: 0.04em;
+}
+
+.topbar-clock {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #5f6b7a;
+}
+
+.topbar-sep {
+    width: 1px;
+    height: 18px;
+    background: rgba(10, 25, 45, 0.2);
+}
+
+
 /* ── PROGRESS ── */
 .progress-wrap { display: none; margin-top: auto; }
 .progress-wrap.visible { display: block; }
