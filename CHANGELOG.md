@@ -3,6 +3,21 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.6.0] - 2026-06-03
+
+### ✨ Mejoras
+
+- Mostrar campo de email en detalle de registro de cliente.
+- Se habilita la opción de borrar el intento de registro de un cliente. Si un cliente no termina su registro, este queda bloqueado por 24 horas. Con acceso de administrador podemos borrar el intento y dejar que vuelva a intentar nuevamente.
+- Mostrar enlace de confirmación de registro a un cliente en proceso de registrarse. Esto ayuda por si un cliente no recibió o no encuentra el correo de completar el proceso de registro.
+
+### ⚙️ Requerimientos
+
+- Variables de entorno:
+    - `NEW_ACCOUNT_CONFIRM_URL`: URL utilizada por la API-OAuth2 para confirmar el registro de un cliente.
+    - `RECOVER_ACCOUNT_CONFIRM_URL`: URL utilizada por la API-OAuth2 para confirmar la recuperación de una contraseña de un cliente.
+
+
 ## [1.5.1] - 2026-06-02
 
 ### 🐞 Arreglado

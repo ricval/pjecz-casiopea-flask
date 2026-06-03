@@ -9,6 +9,7 @@ from flask_login import current_user, login_required
 
 from ...lib.datatables import get_datatable_parameters, output_datatable_json
 from ...lib.safe_string import safe_email, safe_message, safe_string, safe_uuid
+from ...config.settings import get_settings
 from ..bitacoras.models import Bitacora
 from ..modulos.models import Modulo
 from ..permisos.models import Permiso
@@ -109,4 +110,30 @@ def detail(cit_cliente_registro_id):
     if cit_cliente_registro_id == "":
         abort(400)
     cit_cliente_registro = CitClienteRegistro.query.get_or_404(cit_cliente_registro_id)
-    return render_template("cit_clientes_registros/detail.jinja2", cit_cliente_registro=cit_cliente_registro)
+    # Elaborar el URL de verificación
+    settings = get_settings()
+    verificacion_url = settings.NEW_ACCOUNT_CONFIRM_URL
+    verificacion_url = f"{verificacion_url}?id={str(cit_cliente_registro.id)}"
+    verificacion_url = f"{verificacion_url}&cadena_validar={cit_cliente_registro.cadena_validar}"
+    return render_template("cit_clientes_registros/detail.jinja2", cit_cliente_registro=cit_cliente_registro, verificacion_url=verificacion_url)
+
+
+@cit_clientes_registros.route("/cit_clientes_registros/eliminar/<cit_cliente_registro_id>")
+@permission_required(MODULO, Permiso.ADMINISTRAR)
+def delete(cit_cliente_registro_id):
+    """Eliminar un Cit Cliente Registro"""
+    cit_cliente_registro_id = safe_uuid(cit_cliente_registro_id)
+    if cit_cliente_registro_id == "":
+        abort(400)
+    cit_cliente_registro = CitClienteRegistro.query.get_or_404(cit_cliente_registro_id)
+    if cit_cliente_registro.estatus == "A":
+        cit_cliente_registro.delete()
+        bitacora = Bitacora(
+            modulo=Modulo.query.filter_by(nombre=MODULO).first(),
+            usuario=current_user,
+            descripcion=safe_message(f"Eliminado Intento de Registro de un Cliente {cit_cliente_registro.email}"),
+            url=url_for("cit_clientes_registros.detail", cit_cliente_registro_id=cit_cliente_registro.id),
+        )
+        bitacora.save()
+        flash(bitacora.descripcion, "success")
+    return redirect(url_for("cit_clientes_registros.detail", cit_cliente_registro_id=cit_cliente_registro.id))
