@@ -7,7 +7,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 10;
 }
 
 .wrap {
@@ -37,11 +37,11 @@ body {
 }
 
 .pj-left {
-    padding: 28px 24px;
+    padding: 32px 24px;
     border-right: 0.5px solid #e0e0e0;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
     background: #fff;
 }
 
@@ -56,7 +56,7 @@ body {
     text-transform: uppercase;
     letter-spacing: .8px;
     color: #999;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 .pj-sub {
     font-size: 14px;
@@ -111,6 +111,7 @@ body {
     background: #e0e0e0;
     border-radius: 4px;
     overflow: hidden;
+    margin-bottom: 14px;
 }
 .progress-bar {
     height: 100%;
