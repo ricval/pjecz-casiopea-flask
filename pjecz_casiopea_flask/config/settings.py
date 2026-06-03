@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     SENDGRID_FROM_EMAIL: str = os.getenv("SENDGRID_FROM_EMAIL", "")
     TASK_QUEUE_NAME: str = os.getenv("TASK_QUEUE_NAME", "pjecz_casiopea")
     TZ: str = os.getenv("TZ", "America/Mexico_City")
+    NEW_ACCOUNT_CONFIRM_URL: str = os.getenv("NEW_ACCOUNT_CONFIRM_URL", "")
+    RECOVER_ACCOUNT_CONFIRM_URL: str = os.getenv("RECOVER_ACCOUNT_CONFIRM_URL", "")
+    TURNOS_API_KEY: str = os.getenv("TURNOS_API_KEY", "")
+    TURNOS_API_KEY_URL: str = os.getenv("TURNOS_API_KEY_URL", "")
+    TURNOS_USUARIO_ID: int = os.getenv("TURNOS_USUARIO_ID", 0)
+    TURNOS_TIPO_ID: int = os.getenv("TURNOS_TIPO_ID", 0)
 
     # Incrementar el tamaño de lo que se sube en los formularios
     MAX_CONTENT_LENGTH: int | None = None

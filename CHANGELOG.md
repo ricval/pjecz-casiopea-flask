@@ -3,6 +3,61 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.6.0] - 2026-06-03
+
+### ✨ Mejoras
+
+- Mostrar campo de email en detalle de registro de cliente.
+- Se habilita la opción de borrar el intento de registro de un cliente. Si un cliente no termina su registro, este queda bloqueado por 24 horas. Con acceso de administrador podemos borrar el intento y dejar que vuelva a intentar nuevamente.
+- Mostrar enlace de confirmación de registro a un cliente en proceso de registrarse. Esto ayuda por si un cliente no recibió o no encuentra el correo de completar el proceso de registro.
+
+### ⚙️ Requerimientos
+
+- Variables de entorno:
+    - `NEW_ACCOUNT_CONFIRM_URL`: URL utilizada por la API-OAuth2 para confirmar el registro de un cliente.
+    - `RECOVER_ACCOUNT_CONFIRM_URL`: URL utilizada por la API-OAuth2 para confirmar la recuperación de una contraseña de un cliente.
+
+
+## [1.5.1] - 2026-06-02
+
+### 🐞 Arreglado
+
+- En el detalle de una `categorías` no se mostraba bien su listado de servicios.
+
+
+## [1.5.0] - 2026-05-29
+
+### ✨ Mejoras
+
+- Validación de cita. Solo permitir que se acceda el mismo día de la cita.
+- Crear llamado a la API-KEY del sistema Tauro (Turnos) para crear un turnos y recibirlo y guardarlo en la cita.
+- Mostrar el campo `telefono` del cliente en el módulo `cit_citas_turnos` en su captura del código de barras de asistencia.
+- Añadir campo `unidad id - Turnos` en el formulario del módulo `oficina`. Para poder hacer un entendimiento entre el sistema de citas y el de turnos.
+- Para _Test_ se añadió un archivo `*.json` en el directorio `test`. Pero se añadió en el archivo `.gitignore` que no suba los archivos de prueba, solo los ejemplos.
+- Creada prueba de conexión con el sistema de turnos.
+- Crear servicio de turnos. Conexión con la API del sistema de turnos. 
+- Añadida página de pruebas.
+- Añadido página de configuración para el lector de código de barras.
+- Añadido nuevo módulo `cit_citas_turnos`. Que muestra una página para leer el código de barras y marcar la asistencia y crear un nuevo turno en el sistema de turnos.
+- Añadido nuevo campo `turnos_unidad_id` en la tabla `oficinas`. Para establecer que unidad elegir al momento de crear un turno nuevo en el sistema de turnos.
+- Añadido nuevos campos `turno_id` y `turno` en la tabla `cit_citas`. Para guardar el turno generado por el sistema de citas al escanear el código de barras de asistencia.
+- Añadidos los campos de código de barras en el modelo de `cit_citas`. Es nuevo campo sirve para marcar la asistencia del cliente y añadir un nuevo turno al sistema de turnos.
+
+### ⚙️ Requerimientos
+
+- Actualización de BD, ejecutar _scripts_ con `psql -f [nombre_archivo.sql]`:
+    - `v1.5.0-01-add_modulo.sql`
+    - `v1.5.0-02-add_column_turno-cit-citas.sql`
+
+- Variables de entorno:
+    - `TURNOS_API_KEY`: Es la API-Key para comunicarse con el sistema de turnos.
+    - `TURNOS_API_KEY_URL`: Es la URL que se utiliza para comunicarse con el sistema de turnos.
+    - `TURNOS_USUARIO_ID`: Es la ID del usuario que se utiliza para comunicarse con el sistema de turnos.
+    - `TURNOS_TIPO_ID`: Es la ID del tipo de turno en nuestro caso sería del tipo "CON_CITA".
+
+- Archivo de prueba:
+    - `test_crear_turno.json`
+
 ## [1.4.0] - 2026-05-22
 
 ### ✨ Mejoras

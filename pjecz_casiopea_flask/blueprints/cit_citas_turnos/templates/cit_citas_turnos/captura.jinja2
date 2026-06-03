@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SAJI Citas — Control de Acceso</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/escaner_citas.css') }}" rel="stylesheet" />
+    </head>
+    <body>
+
+    <!-- TOP BAR -->
+    <div class="wrap">
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <img src="https://citas.saji.gob.mx/images/logo_navbar.png" alt="SAJI Citas" class="topbar-logo-img"/>
+        </div>
+        <div class="topbar-clock" id="clock">--:--:--</div>
+    </div>
+
+        <div class="pj-body">
+
+            <!-- PANEL IZQUIERDO: Formulario de escaneo -->
+            <div class="pj-left">
+                <div class="section-lbl">Confirme su cita</div>
+
+                {% if cit_cita %}
+                <div class="scanner-area ok" id="scanZone">
+                    <div class="scan-icon ok" id="scanIcWrap">
+                        <i class="ti ti-check" id="scanIco"></i>
+                    </div>
+                    <div class="scanner-label ok-text" id="scanLabel">Cita verificada</div>
+                </div>
+                {% elif error %}
+                <div class="scanner-area err" id="scanZone">
+                    <div class="scan-icon err" id="scanIcWrap">
+                        <i class="ti ti-alert-triangle" id="scanIco"></i>
+                    </div>
+                    <div class="scanner-label" id="scanLabel">Código no válido</div>
+                </div>
+                {% else %}
+                <div class="scanner-area" id="scanZone">
+                    <div class="scan-icon" id="scanIcWrap">
+                        <i class="ti ti-barcode" id="scanIco"></i>
+                    </div>
+                    <div class="scanner-label" id="scanLabel">
+                        Escanee el código de barras
+                        <p class="pj-sub">Apunte la pistola lectora al código de su cita</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form action="{{ url_for('cit_citas_turnos.captura') }}" method="post" id="barcode-form" autocomplete="off">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+                    <input type="text" class="hidden-input" id="barcode" name="barcode" />
+                </form>
+
+                <div class="progress-wrap" id="progressWrap">
+                    <div class="progress-track">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: Información de la cita -->
+            <div class="pj-right">
+
+                <div class="right-header">
+                    <div class="section-lbl" style="margin-bottom:0;">Información de la cita</div>
+                    {% if cit_cita %}
+                    <span class="badge ok">
+                        <i class="ti ti-circle-check" style="font-size:13px;"></i>
+                        Confirmada
+                    </span>
+                    {% elif error %}
+                    <span class="badge err">
+                        <i class="ti ti-alert-circle" style="font-size:13px;"></i>
+                        No válida
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div id="citaContent" style="height: calc(100% - 38px); display: flex; flex-direction: column;">
+
+                    {% if cit_cita %}
+                    <div class="cita-card">
+
+                        <!-- Persona -->
+                        <div class="persona-row">
+                            {% set palabras = cit_cita.cit_cliente.nombre.split() %}
+                            {% set iniciales = (palabras[0][0] if palabras|length > 0 else '') + (palabras[1][0] if palabras|length > 1 else '') %}
+                            <div class="avatar">{{ iniciales | upper }}</div>
+                            <div>
+                                <div class="persona-name">{{ cit_cita.cit_cliente.nombre }}</div>
+                                <div class="persona-meta">
+                                    <span><i class="ti ti-phone"></i> {{ cit_cita.cit_cliente.telefono }}</span>
+                                    <span><i class="ti ti-mail"></i> {{ cit_cita.cit_cliente.email }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fecha y hora -->
+                        <div class="datetime-row">
+                            <div class="dt-cell">
+                                <div class="dt-icon"><i class="ti ti-calendar"></i></div>
+                                <div>
+                                    <div class="dt-lbl">Fecha</div>
+                                    <div class="dt-val">{{ cit_cita.inicio.strftime('%d/%m/%Y') }}</div>
+                                </div>
+                            </div>
+                            <div class="dt-cell">
+                                <div class="dt-icon"><i class="ti ti-clock"></i></div>
+                                <div>
+                                    <div class="dt-lbl">Hora</div>
+                                    <div class="dt-val">{{ cit_cita.inicio.strftime('%H:%M') }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unidad -->
+                        <div class="info-row">
+                            <div class="info-icon"><i class="ti ti-building-bank"></i></div>
+                            <div>
+                                <div class="info-lbl">Unidad</div>
+                                <div class="info-val">{{ cit_cita.oficina.descripcion_corta }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Tipo de trámite -->
+                        <div class="info-row">
+                            <div class="info-icon"><i class="ti ti-file-description"></i></div>
+                            <div>
+                                <div class="info-lbl">Tipo de trámite</div>
+                                <div class="info-val">{{ cit_cita.cit_servicio.descripcion }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Notas / Expedientes -->
+                        {% if cit_cita.notas %}
+                        <div class="info-row">
+                            <div class="info-icon">
+                                {% if '(' in cit_cita.notas %}
+                                <i class="ti ti-files"></i>
+                                {% else %}
+                                <i class="ti ti-note"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div class="info-lbl">
+                                    {% if '(' in cit_cita.notas %}Expedientes{% else %}Notas{% endif %}
+                                </div>
+                                <div class="info-val">{{ cit_cita.notas }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Turno -->
+                        {% if cit_cita.turno %}
+                        <div class="turno-block">
+                            <div class="turno-lbl">Turno asignado</div>
+                            <div class="turno-num">{{ cit_cita.turno }}</div>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% elif error %}
+                    <div class="error-block">
+                        <i class="ti ti-alert-circle"></i>
+                        <p>{{ error }}</p>
+                    </div>
+
+                    {% else %}
+                    <div class="cita-empty">
+                        <i class="ti ti-qrcode"></i>
+                        <p>Escanee el código de barras<br>para ver la información de la cita</p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="action-buttons">
+        <a href="{{ url_for('cit_citas_turnos.config', paso_id=1) }}" title="Configuración">
+            <i class="ti ti-settings"></i>
+        </a>
+        <a href="{{ url_for('cit_citas_turnos.tests') }}" title="Test">
+            <i class="ti ti-check"></i>
+        </a>
+    </div>
+
+    <script>
+        const RESET_SECS = 10;
+
+        const inp    = document.getElementById('barcode');
+        const form   = document.getElementById('barcode-form');
+        const zone   = document.getElementById('scanZone');
+        const icWrap = document.getElementById('scanIcWrap');
+        const ico    = document.getElementById('scanIco');
+        const label  = document.getElementById('scanLabel');
+
+        inp.focus();
+        document.addEventListener('click', () => inp.focus());
+
+        let scanDebounce = null;
+
+        inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                clearTimeout(scanDebounce);
+                const val = inp.value.trim().toUpperCase();
+                if (!val) return;
+                form.submit();
+            }
+        });
+
+        inp.addEventListener('input', () => {
+            if (!inp.value.trim()) return;
+            clearTimeout(scanDebounce);
+            setZone('active', '', 'ti-scan');
+            label.textContent = 'Leyendo código...';
+            scanDebounce = setTimeout(() => form.submit(), 200);
+        });
+
+        {% if cit_cita or error %}
+        startProgress();
+        {% endif %}
+
+        function startProgress() {
+            const wrap = document.getElementById('progressWrap');
+            const bar  = document.getElementById('progressBar');
+            wrap.classList.add('visible');
+            bar.style.transition = 'none';
+            bar.style.width = '100%';
+            setTimeout(() => {
+                bar.style.transition = `width ${RESET_SECS}s linear`;
+                bar.style.width = '0%';
+            }, 30);
+            setTimeout(reset, RESET_SECS * 1000);
+        }
+
+        function reset() {
+            window.location.href = window.location.pathname;
+        }
+
+        function setZone(zoneClass, icClass, icoClass) {
+            zone.className   = 'scanner-area ' + zoneClass;
+            icWrap.className = 'scan-icon ' + icClass;
+            ico.className    = 'ti ' + icoClass;
+        }
+        // ─── CLOCK ───────────────────────────────────────────────────────
+        function updateClock() {
+        document.getElementById("clock").textContent =
+            new Date().toLocaleTimeString("es-MX");
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+
+    </body>
+</html>

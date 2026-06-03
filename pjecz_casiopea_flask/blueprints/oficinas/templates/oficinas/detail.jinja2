@@ -39,6 +39,7 @@
             <div class="col-md-6">
                 {{ detail.label_value('Horario', oficina.apertura.strftime("%H:%M") + ' — ' + oficina.cierre.strftime("%H:%M")) }}
                 {{ detail.label_value('Límite de Personas', oficina.limite_personas) }}
+                {{ detail.label_value('Unidad ID (Sistema de Turnos)', oficina.turnos_unidad_id) }}
                 {{ detail.label_value_boolean('Es Juridiccional', oficina.es_jurisdiccional) }}
                 {{ detail.label_value_boolean('Agendar citas', oficina.puede_agendar_citas) }}
                 {{ detail.label_value_boolean('Enviar QR', oficina.puede_enviar_qr) }}
