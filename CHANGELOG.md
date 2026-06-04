@@ -7,6 +7,9 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### ✨ Mejoras
 
+- Campo de filtro: "CURP" en listado de `Clientes`.
+- Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes`.
+- Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes Registros`.
 - Eliminación de intentos de recuperación de contraseñe para un cliente.
 - Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes Recuperaciones`.
 - Añadido filtro para "oficinas" en el listado de `citas`.
