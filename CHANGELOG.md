@@ -3,7 +3,7 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
-### [1.7.0] - 2026-06-05
+### [1.7.0] - 2026-06-04
 
 ### ✨ Mejoras
 
@@ -12,12 +12,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes Registros`.
 - Eliminación de intentos de recuperación de contraseñe para un cliente.
 - Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes Recuperaciones`.
-- Añadido filtro para "oficinas" en el listado de `citas`.
+- Añadido filtro para "Oficinas" en el listado de `citas`.
 - Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `citas`.
 
 ### ❌ Eliminado
 
-- Scripts de migración de la base de datos:
+- Scripts de actualización de la base de datos:
   - `v1.5.0-01-add_modulo.sql`
   - `v1.5.0-02-add_column_turno-cit_citas.sql`
 
