@@ -3,6 +3,25 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.7.0] - 2026-06-04
+
+### ✨ Mejoras
+
+- Campo de filtro: "CURP" en listado de `Clientes`.
+- Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes`.
+- Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes Registros`.
+- Eliminación de intentos de recuperación de contraseñe para un cliente.
+- Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `Clientes Recuperaciones`.
+- Añadido filtro para "Oficinas" en el listado de `citas`.
+- Combinación de campos de filtro: "Nombres", "Primero Apellido" y "Segundo Apellido" a uno solo "Nombre Completo" en listado de `citas`.
+
+### ❌ Eliminado
+
+- Scripts de actualización de la base de datos:
+  - `v1.5.0-01-add_modulo.sql`
+  - `v1.5.0-02-add_column_turno-cit_citas.sql`
+
+
 ### [1.6.0] - 2026-06-03
 
 ### ✨ Mejoras
@@ -58,6 +77,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Archivo de prueba:
     - `test_crear_turno.json`
 
+
 ## [1.4.0] - 2026-05-22
 
 ### ✨ Mejoras
@@ -67,6 +87,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 ### 🐞 Arreglado
 
 - En el detalle de `categorías` no se mostraba el detalle en sí de la categoría.
+
 
 ## [1.3.0] - 2026-05-21
 
@@ -83,7 +104,6 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 - Botones en listado de citas, para las diferentes vistas del día, se quedaban activados al seleccionar el botón "inactivos".
 
-***
 
 ## [1.2.0] - 2026-05-20
 
@@ -108,6 +128,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Formulario de edición de 'Servicios'. Los campos select con uuid no se seleccionaban correctamente.
 - En columna 'Fecha' del listado de citas. Al utilizar la función `moment()` no mostraba la fecha correctamente.
 - Listado de citas por 'Autoridad'. Filtrando solo las citas pertenecientes a dicha oficina.
+
 
 ## [1.1.3] - 2026-05-07
 

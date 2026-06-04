@@ -8,6 +8,8 @@ from datetime import date, timedelta
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from sqlalchemy import or_
+
 from ...lib.datatables import get_datatable_parameters, output_datatable_json
 from ...lib.safe_string import safe_email, safe_message, safe_string, safe_uuid
 from ..bitacoras.models import Bitacora
@@ -16,6 +18,7 @@ from ..cit_clientes.models import CitCliente
 from ..permisos.models import Permiso
 from ..usuarios.decorators import permission_required
 from .models import CitCita
+from ..oficinas.models import Oficina
 from .forms import CitaAsistenciaForm
 from ..usuarios_oficinas.models import UsuarioOficina
 
@@ -60,35 +63,23 @@ def datatable_json():
         if estado != "":
             consulta = consulta.filter(CitCita.estado == estado)
     # Luego filtrar por columnas de otras tablas
-    cit_cliente_email = ""
+    if "oficina_clave" in request.form:
+        consulta = consulta.join(Oficina)
+        consulta = consulta.filter(Oficina.clave.contains(request.form["oficina_clave"]))
     if "cit_cliente_email" in request.form:
         cit_cliente_email = safe_email(request.form["cit_cliente_email"], search_fragment=True)
-    cit_cliente_nombres = ""
-    if "cit_cliente_nombres" in request.form:
-        cit_cliente_nombres = safe_string(request.form["cit_cliente_nombres"], save_enie=True)
-    cit_cliente_apellido_primero = ""
-    if "cit_cliente_apellido_primero" in request.form:
-        cit_cliente_apellido_primero = safe_string(request.form["cit_cliente_apellido_primero"], save_enie=True)
-    cit_cliente_apellido_segundo = ""
-    if "cit_cliente_apellido_segundo" in request.form:
-        cit_cliente_apellido_segundo = safe_string(request.form["cit_cliente_apellido_segundo"], save_enie=True)
-    if (
-        cit_cliente_email != ""
-        or cit_cliente_nombres != ""
-        or cit_cliente_apellido_primero != ""
-        or cit_cliente_apellido_segundo != ""
-    ):
-        consulta = consulta.join(CitCliente)
-        if cit_cliente_email != "":
+        if cit_cliente_email:
+            consulta = consulta.join(CitCliente)
             consulta = consulta.filter(CitCliente.email.contains(cit_cliente_email))
-        if cit_cliente_nombres != "":
-            consulta = consulta.filter(CitCliente.nombres.contains(cit_cliente_nombres))
-        if cit_cliente_apellido_primero != "":
-            consulta = consulta.filter(CitCliente.apellido_primero.contains(cit_cliente_apellido_primero))
-        if cit_cliente_apellido_segundo != "":
-            consulta = consulta.filter(CitCliente.apellido_segundo.contains(cit_cliente_apellido_segundo))
+    elif "cit_cliente_nombre_completo" in request.form:
+        cit_cliente_nombre_completo = safe_string(request.form["cit_cliente_nombre_completo"], save_enie=True)
+        if cit_cliente_nombre_completo:
+            consulta = consulta.join(CitCliente)
+            palabras = cit_cliente_nombre_completo.split()
+            for palabra in palabras:
+                consulta = consulta.filter(or_(CitCliente.nombres.contains(palabra), CitCliente.apellido_primero.contains(palabra), CitCliente.apellido_segundo.contains(palabra)))
     # Ordenar y paginar
-    registros = consulta.order_by(CitCita.creado.desc()).offset(start).limit(rows_per_page).all()
+    registros = consulta.order_by(CitCita.inicio).offset(start).limit(rows_per_page).all()
     total = consulta.count()
     # Elaborar datos para DataTable
     data = []

@@ -11,10 +11,10 @@
         {# if current_user.can_edit('CIT CLIENTES RECUPERACIONES') %}
             {{ topbar.button_edit('Editar', url_for('cit_clientes_recuperaciones.edit', cit_cliente_recuperacion_id=cit_cliente_recuperacion.id)) }}
         {% endif #}
-        {# if current_user.can_admin('CIT CLIENTES RECUPERACIONES') %}
+        {% if current_user.can_admin('CIT CLIENTES RECUPERACIONES') %}
             {% if cit_cliente_recuperacion.estatus == 'A' %}{{ topbar.button_delete('Eliminar', url_for('cit_clientes_recuperaciones.delete', cit_cliente_recuperacion_id=cit_cliente_recuperacion.id)) }}{% endif %}
-            {% if cit_cliente_recuperacion.estatus == 'B' %}{{ topbar.button_recover('Recuperar', url_for('cit_clientes_recuperaciones.recover', cit_cliente_recuperacion_id=cit_cliente_recuperacion.id)) }}{% endif %}
-        {% endif #}
+            {# {% if cit_cliente_recuperacion.estatus == 'B' %}{{ topbar.button_recover('Recuperar', url_for('cit_clientes_recuperaciones.recover', cit_cliente_recuperacion_id=cit_cliente_recuperacion.id)) }}{% endif %} #}
+        {% endif %}
     {% endcall %}
 {% endblock %}
 
@@ -26,16 +26,15 @@
             {{ detail.label_value('Cliente', cit_cliente_recuperacion.cit_cliente.email) }}
         {% endif %}
         {{ detail.label_value('Expiracion', moment(cit_cliente_recuperacion.expiracion, local=True).format('llll')) }}
-        {{ detail.label_value('Cadena validar', cit_cliente_recuperacion.cadena_validar) }}
         {{ detail.label_value('Cantidad de mensajes', cit_cliente_recuperacion.mensajes_cantidad) }}
         {{ detail.label_value_boolean('Ya recuperado', cit_cliente_recuperacion.ya_recuperado) }}
-        {# detail.label_value('Creado', moment(cit_cliente_recuperacion.creado, local=False).format('DD MMM YYYY HH:mm')) #}
+        {{ detail.label_value('URL de Recuperación', recuperacion_url) }}
     {% endcall %}
 {% endblock %}
 
 {% block custom_javascript %}
-    {# if current_user.can_admin('CIT CLIENTES RECUPERACIONES') %}
-        {% if cit_cliente_recuperacion.estatus == 'A' %}{{ modals.custom_javascript_delete('Eliminar', '¿Eliminar a ' + cit_cliente_recuperacion.id + '?') }}{% endif %}
-        {% if cit_cliente_recuperacion.estatus == 'B' %}{{ modals.custom_javascript_recover('Recuperar', '¿Recuperar a ' + cit_cliente_recuperacion.id + '?') }}{% endif %}
-    {% endif #}
+    {% if current_user.can_admin('CIT CLIENTES RECUPERACIONES') %}
+        {% if cit_cliente_recuperacion.estatus == 'A' %}{{ modals.custom_javascript_delete('Eliminar', '¿Eliminar intento de recuperación de contraseña del cliente ' + cit_cliente_recuperacion.cit_cliente.email + '?') }}{% endif %}
+        {# {% if cit_cliente_recuperacion.estatus == 'B' %}{{ modals.custom_javascript_recover('Recuperar', '¿Recuperar a ' + cit_cliente_recuperacion.id + '?') }}{% endif %} #}
+    {% endif %}
 {% endblock %}
