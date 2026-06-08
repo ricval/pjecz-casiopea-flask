@@ -9,6 +9,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 - Se quitó la opción de "Marcar Asistencia" en el módulo `cit_citas`. Ya no era funcional, ahora se utiliza un código de barras. Genera confusión a los usuarios, que intentan escribir el código de barras en este campo, lo cual les marca un error.
 
+### 🐞 Arreglado
+
+- CLI de envío de agenda de citas. Programa que envía el reporte de citas para el siguiente día hábil a cada oficina.
+
 
 ### [1.7.0] - 2026-06-04
 
