@@ -13,6 +13,7 @@ from pjecz_casiopea_flask.blueprints.cit_citas.models import CitCita, database
 from pjecz_casiopea_flask.blueprints.cit_dias_inhabiles.models import CitDiaInhabil
 from pjecz_casiopea_flask.blueprints.oficinas.models import Oficina
 from pjecz_casiopea_flask.blueprints.usuarios_oficinas.models import UsuarioOficina
+from pjecz_casiopea_flask.lib.safe_string import safe_email
 from pjecz_casiopea_flask.main import app
 from pjecz_casiopea_flask.services.sendmail import PlantillaReporteCitasProximas, Email, MyRequestError
 
@@ -87,8 +88,11 @@ def _get_proximo_dia_habil() -> date:
 
 
 @cit_citas.command()
-def enviar_agenda():
-    """Enviar la agenda del próximo día hábil a los usuarios de cada oficina por SendGrid"""
+def enviar_agenda(email: str = None):
+    """
+    Enviar la agenda del próximo día hábil por SendGrid.
+    Si se proporciona un --email, se enviarán todos los reportes a esa dirección (para pruebas).
+    """
     console = Console()
     bitacora.info("Inicia la tarea para enviar la agenda del próximo día hábil.")
 
@@ -127,33 +131,49 @@ def enviar_agenda():
             UsuarioOficina.estatus == "A",
             UsuarioOficina.oficina_id == oficina.id,
         ).all()
-        usuarios = [uo.usuario for uo in usuarios_oficinas if uo.usuario.estatus == "A"]
+        # Asegurarse de que el usuario relacionado exista y esté activo
+        usuarios = [uo.usuario for uo in usuarios_oficinas if uo.usuario and uo.usuario.estatus == "A"]
 
+        # Si no hay usuarios, omitir esta oficina por completo.
         if not usuarios:
             msg = f"Oficina '{oficina.clave}' no tiene usuarios activos asignados. Se omite el envío de correo."
             bitacora.warning(msg)
             continue
 
-        usuarios_nombres_str = ", ".join(u.nombre for u in usuarios)
-        usuarios_emails_str = ", ".join(u.email for u in usuarios)
+        destinatarios_emails = []
+        destinatarios_nombres = "usuarios de la oficina"
 
-        msg = f"Oficina '{oficina.clave}': {len(citas)} citas. Enviando a {len(usuarios)} usuario(s): {usuarios_emails_str}"
+        if email:
+            try:
+                destinatarios_emails = [safe_email(email)]
+                destinatarios_nombres = f"usuario de prueba ({email})"
+            except ValueError:
+                console.print(f"[red]El email '{email}' no es válido. Se aborta la tarea.[/red]")
+                bitacora.error(f"El email proporcionado '{email}' no es válido.")
+                return
+        else:
+            destinatarios_emails = [u.email for u in usuarios]
+            destinatarios_nombres = ", ".join(u.nombre for u in usuarios)
+
+        destinatarios_emails_str = ", ".join(destinatarios_emails)
+        msg = f"Oficina '{oficina.clave}': {len(citas)} citas. Enviando a {len(destinatarios_emails)} destinatario(s): {destinatarios_emails_str}"
         bitacora.info(msg)
+
         # Creación de la plantilla para el email
         plantilla_reporte_citas_proximas = PlantillaReporteCitasProximas(
             fecha_reporte=proximo_dia_habil,
-            usuario_nombre=usuarios_nombres_str,
+            usuario_nombre=destinatarios_nombres,
             oficina=f"{oficina.clave}: {oficina.descripcion_corta}",
             citas=citas,
         )
 
         # Envío de email
-        send_email = Email([u.email for u in usuarios], plantilla_reporte_citas_proximas)
+        send_email = Email(destinatarios_emails, plantilla_reporte_citas_proximas)
         try:
             send_email.enviar_email()
-            bitacora.info(f"Correo para la oficina '{oficina.clave}' enviado correctamente a {usuarios_emails_str}.")
+            bitacora.info(f"Correo para la oficina '{oficina.clave}' enviado correctamente a {destinatarios_emails_str}.")
         except MyRequestError as error:
-            error_msg = f"Error al enviar email para la oficina '{oficina.clave}' a {usuarios_emails_str}: {error}"
+            error_msg = f"Error al enviar email para la oficina '{oficina.clave}' a {destinatarios_emails_str}: {error}"
             console.print(f"[red]{error_msg}[/red]")
             bitacora.error(error_msg)
 
