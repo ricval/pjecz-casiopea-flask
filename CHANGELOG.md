@@ -3,6 +3,13 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.7.1] - 2026-06-08
+
+### ❌ Eliminado
+
+- Se quitó la opción de "Marcar Asistencia" en el módulo `cit_citas`. Ya no era funcional, ahora se utiliza un código de barras. Genera confusión a los usuarios, que intentan escribir el código de barras en este campo, lo cual les marca un error.
+
+
 ### [1.7.0] - 2026-06-04
 
 ### ✨ Mejoras

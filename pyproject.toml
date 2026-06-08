@@ -1,6 +1,6 @@
 [project]
 name = "pjecz-casiopea-flask"
-version = "1.7.0"
+version = "1.7.1"
 description = "Plataforma de administración del sistema de citas."
 readme = "README.md"
 requires-python = ">=3.14"
