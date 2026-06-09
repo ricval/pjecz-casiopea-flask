@@ -139,3 +139,24 @@ def delete(cit_cliente_registro_id):
         bitacora.save()
         flash(bitacora.descripcion, "success")
     return redirect(url_for("cit_clientes_registros.detail", cit_cliente_registro_id=cit_cliente_registro.id))
+
+
+@cit_clientes_registros.route("/cit_clientes_registros/recuperar/<cit_cliente_registro_id>")
+@permission_required(MODULO, Permiso.ADMINISTRAR)
+def recover(cit_cliente_registro_id):
+    """Recuperar un Cit Cliente Registro"""
+    cit_cliente_registro_id = safe_uuid(cit_cliente_registro_id)
+    if cit_cliente_registro_id == "":
+        abort(400)
+    cit_cliente_registro = CitClienteRegistro.query.get_or_404(cit_cliente_registro_id)
+    if cit_cliente_registro.estatus == "B":
+        cit_cliente_registro.recover()
+        bitacora = Bitacora(
+            modulo=Modulo.query.filter_by(nombre=MODULO).first(),
+            usuario=current_user,
+            descripcion=safe_message(f"Recuperado Intento de Registro de un Cliente {cit_cliente_registro.email}"),
+            url=url_for("cit_clientes_registros.detail", cit_cliente_registro_id=cit_cliente_registro.id),
+        )
+        bitacora.save()
+        flash(bitacora.descripcion, "success")
+    return redirect(url_for("cit_clientes_registros.detail", cit_cliente_registro_id=cit_cliente_registro.id))
