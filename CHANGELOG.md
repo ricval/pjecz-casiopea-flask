@@ -3,6 +3,13 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.7.2] - 2026-06-09
+
+### ✨ Mejoras
+
+- Habilitado botón para recuperar un cliente que no término su registro correctamente. `cit_clientes_registros`.
+
+
 ### [1.7.1] - 2026-06-08
 
 ### ❌ Eliminado
