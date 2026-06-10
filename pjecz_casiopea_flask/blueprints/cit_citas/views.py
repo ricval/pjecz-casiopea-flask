@@ -241,3 +241,67 @@ def asistencia(cit_cita_id):
     form.cliente_nombre.data = cit_cita.cit_cliente.nombre
     # Entrega del template
     return render_template("cit_citas/asistencia.jinja2", form=form, cit_cita=cit_cita)
+
+
+@cit_citas.route("/cit_citas/eliminar/<cit_cita_id>")
+@permission_required(MODULO, Permiso.ADMINISTRAR)
+def delete(cit_cita_id):
+    """Eliminar Cit Cita"""
+    cit_cita_id = safe_uuid(cit_cita_id)
+    if cit_cita_id == "":
+        abort(400)
+    cit_cita = CitCita.query.get_or_404(cit_cita_id)
+    if cit_cita.estatus == "A":
+        cit_cita.delete()
+        bitacora = Bitacora(
+            modulo=Modulo.query.filter_by(nombre=MODULO).first(),
+            usuario=current_user,
+            descripcion=safe_message(f"Eliminada Cita {cit_cita.id}"),
+            url=url_for("cit_citas.detail", cit_cita_id=cit_cita.id),
+        )
+        bitacora.save()
+        flash(bitacora.descripcion, "success")
+    return redirect(url_for("cit_citas.detail", cit_cita_id=cit_cita.id))
+
+
+@cit_citas.route("/cit_citas/recuperar/<cit_cita_id>")
+@permission_required(MODULO, Permiso.ADMINISTRAR)
+def recover(cit_cita_id):
+    """Recuperar Cit Cita"""
+    cit_cita_id = safe_uuid(cit_cita_id)
+    if cit_cita_id == "":
+        abort(400)
+    cit_cita = CitCita.query.get_or_404(cit_cita_id)
+    if cit_cita.estatus == "B":
+        cit_cita.recover()
+        bitacora = Bitacora(
+            modulo=Modulo.query.filter_by(nombre=MODULO).first(),
+            usuario=current_user,
+            descripcion=safe_message(f"Recuperar Cita {cit_cita.id}"),
+            url=url_for("cit_citas.detail", cit_cita_id=cit_cita.id),
+        )
+        bitacora.save()
+        flash(bitacora.descripcion, "success")
+    return redirect(url_for("cit_citas.detail", cit_cita_id=cit_cita.id))
+
+
+@cit_citas.route("/cit_citas/cancelar/<cit_cita_id>")
+@permission_required(MODULO, Permiso.ADMINISTRAR)
+def cancel(cit_cita_id):
+    """Cancelar Cit Cita"""
+    cit_cita_id = safe_uuid(cit_cita_id)
+    if cit_cita_id == "":
+        abort(400)
+    cit_cita = CitCita.query.get_or_404(cit_cita_id)
+    if cit_cita:
+        cit_cita.estado = "CANCELO"
+        cit_cita.save()
+        bitacora = Bitacora(
+            modulo=Modulo.query.filter_by(nombre=MODULO).first(),
+            usuario=current_user,
+            descripcion=safe_message(f"Cita Cancelada {cit_cita.id}"),
+            url=url_for("cit_citas.detail", cit_cita_id=cit_cita.id),
+        )
+        bitacora.save()
+        flash(bitacora.descripcion, "success")
+    return redirect(url_for("cit_citas.detail", cit_cita_id=cit_cita.id))

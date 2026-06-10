@@ -3,6 +3,14 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.7.3] - 2026-06-10
+
+### ✨ Mejoras
+
+- Habilitado botón para cancelar una cita. `cit_citas`.
+- Habilitado botón para eliminar y recuperar una cita. `cit_citas`.
+
+
 ### [1.7.2] - 2026-06-09
 
 ### ✨ Mejoras
