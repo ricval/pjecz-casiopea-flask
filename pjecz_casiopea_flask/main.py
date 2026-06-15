@@ -8,6 +8,7 @@ from rq import Queue
 from werkzeug.wrappers import Response
 
 from .blueprints.autoridades.views import autoridades
+from .blueprints.agendas.views import agendas
 from .blueprints.bitacoras.views import bitacoras
 from .blueprints.cit_categorias.views import cit_categorias
 from .blueprints.cit_citas.views import cit_citas
@@ -70,6 +71,7 @@ if app.config["ENVIRONMENT"].lower() == "production" and app.config["PREFIX"]:
 
 # Cargar las vistas
 app.register_blueprint(autoridades)
+app.register_blueprint(agendas)
 app.register_blueprint(bitacoras)
 app.register_blueprint(cit_categorias)
 app.register_blueprint(cit_citas)
