@@ -1,0 +1,31 @@
+<td id="accion-{{ cit_cita.id }}">
+    {% if cit_cita.estado == 'ASISTIO' %}
+        <span class="badge rounded-pill bg-success px-3">Asistió</span>
+    {% elif cit_cita.estado == 'PENDIENTE' %}
+        <span class="badge rounded-pill bg-warning text-dark px-3">Pendiente</span>
+    {% elif cit_cita.estado == 'CANCELO' %}
+        <span class="badge rounded-pill bg-secondary px-3">Canceló</span>
+    {% elif cit_cita.estado == 'INASISTENCIA' %}
+        <span class="badge rounded-pill bg-danger px-3">Inasistencia</span>
+    {% endif %}
+    <div class="mt-1">
+    {% if cit_cita.estado == 'PENDIENTE' %}
+        <button hx-post="{{ url_for('agendas.cambiar_estado', cit_cita_id=cit_cita.id, estado='ASISTIO') }}"
+                hx-target="#accion-{{ cit_cita.id }}" hx-swap="outerHTML"
+                class="btn btn-sm btn-success" title="Marcar Asistió">
+            <span class="mdi mdi-check-bold"></span>
+        </button>
+        <button hx-post="{{ url_for('agendas.cambiar_estado', cit_cita_id=cit_cita.id, estado='INASISTENCIA') }}"
+                hx-target="#accion-{{ cit_cita.id }}" hx-swap="outerHTML"
+                class="btn btn-sm btn-danger" title="Marcar Inasistencia">
+            <span class="mdi mdi-account-remove"></span>
+        </button>
+    {% else %}
+        <button hx-post="{{ url_for('agendas.cambiar_estado', cit_cita_id=cit_cita.id, estado='PENDIENTE') }}"
+                hx-target="#accion-{{ cit_cita.id }}" hx-swap="outerHTML"
+                class="btn btn-sm btn-warning" title="Regresar a Pendiente">
+            <span class="mdi mdi-restore"></span>
+        </button>
+    {% endif %}
+    </div>
+</td>

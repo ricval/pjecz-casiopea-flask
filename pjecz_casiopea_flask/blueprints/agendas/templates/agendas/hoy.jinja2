@@ -1,0 +1,63 @@
+{% extends 'layouts/app.jinja2' %}
+{% import 'macros/list.jinja2' as list %}
+{% import 'macros/topbar.jinja2' as topbar %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block topbar_actions %}
+    {% call topbar.page_buttons(titulo) %}
+    {% endcall %}
+{% endblock %}
+
+{% block content %}
+    {% call list.card() %}
+        <p class="mb-2">
+            <strong>Oficina:</strong> {{ oficina.descripcion }} &nbsp;|&nbsp;
+            <strong>Servicio:</strong> {{ servicio.clave }} — {{ servicio.descripcion }} &nbsp;|&nbsp;
+            <strong>Fecha:</strong> {{ fecha.strftime('%d/%m/%Y') }}
+        </p>
+        <table id="agenda" class="table table-bordered table-sm align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width:140px">Horario</th>
+                    <th>Cliente</th>
+                    <th>Notas</th>
+                    <th style="width:160px">Estado / Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in agenda %}
+                <tr>
+                    <td class="text-nowrap fw-bold">
+                        {{ slot.inicio.strftime('%H:%M') }} – {{ slot.termino.strftime('%H:%M') }}
+                    </td>
+                    {% if slot.cita %}
+                    <td>
+                        {{ slot.cita.cit_cliente.nombre }}<br>
+                        <small class="text-secondary">{{ slot.cita.cit_cliente.email }}</small>
+                    </td>
+                    <td>{% if slot.cita.notas %}{% for nota in slot.cita.notas.replace(';', ',').split(',') %}{{ nota.strip() }}{% if not loop.last %}<br>{% endif %}{% endfor %}{% endif %}</td>
+                    {% set cit_cita = slot.cita %}
+                    {% include 'agendas/estado_celda.jinja2' %}
+                    {% else %}
+                    <td colspan="3" class="text-center fst-italic text-muted">— sin cita —</td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">No hay horarios generados para este servicio.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endcall %}
+{% endblock %}
+
+{% block custom_javascript %}
+    <script src="https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js"></script>
+    <script>
+        htmx.on('htmx:configRequest', function(e) {
+            e.detail.headers['X-CSRFToken'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        });
+    </script>
+{% endblock %}

@@ -3,6 +3,13 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+### [1.8.0] - 2026-06-12
+
+### ✨ Mejoras
+
+- Nuevo módulo llamado `agenda`. El cual va a mostrar en forma de tabla todas las citas del día, tanto las agendadas como los espacios sin reserva.
+
+
 ### [1.7.3] - 2026-06-10
 
 ### ✨ Mejoras
