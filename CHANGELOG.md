@@ -3,7 +3,7 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
-### [1.8.0] - 2026-06-15
+### [1.8.0] - 2026-06-17
 
 ### ✨ Mejoras
 
