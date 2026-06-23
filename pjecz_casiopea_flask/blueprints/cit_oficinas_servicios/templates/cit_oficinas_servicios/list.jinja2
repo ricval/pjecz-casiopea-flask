@@ -59,6 +59,7 @@
                     <th>Descripción corta</th>
                     <th>Servicio</th>
                     <th>Descripción</th>
+                    <th>Límite</th>
                     <th>Activo</th>
                 </tr>
             </thead>
@@ -82,6 +83,7 @@
             { data: 'oficina_descripcion_corta' },
             { data: 'cit_servicio' },
             { data: 'cit_servicio_descripcion' },
+            { data: 'limite_personas' },
             { data: "toggle_es_activo" }
         ];
         configDTCitOficinasServicios['columnDefs'] = [
@@ -127,7 +129,14 @@
                 }
             },
             {
-                targets: 5, // toggle_es_activo
+                targets: 5, // limite_personas
+                data: null,
+                render: function(data, type, row, meta) {
+                    return data;
+                }
+            },
+            {
+                targets: 6, // toggle_es_activo
                 data: null,
                 render: function(data, type, row, meta) {
                     if (data.url === '') {

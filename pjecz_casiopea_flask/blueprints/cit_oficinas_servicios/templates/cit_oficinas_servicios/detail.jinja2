@@ -8,6 +8,9 @@
 {% block topbar_actions %}
     {% call topbar.page_buttons('Oficina-Servicio ' + cit_oficina_servicio.descripcion) %}
         {{ topbar.button_previous('Oficinas-Servicios', url_for('cit_oficinas_servicios.list_active')) }}
+        {% if current_user.can_edit('CIT OFICINAS SERVICIOS') %}
+            {% if cit_oficina_servicio.estatus == 'A' %}{{ topbar.button_edit('Editar', url_for('cit_oficinas_servicios.edit', cit_oficina_servicio_id=cit_oficina_servicio.id)) }}{% endif %}
+        {% endif %}
         {% if current_user.can_admin('CIT OFICINAS SERVICIOS') %}
             {% if cit_oficina_servicio.estatus == 'A' %}{{ topbar.button_delete('Eliminar', url_for('cit_oficinas_servicios.delete', cit_oficina_servicio_id=cit_oficina_servicio.id)) }}{% endif %}
             {% if cit_oficina_servicio.estatus == 'B' %}{{ topbar.button_recover('Recuperar', url_for('cit_oficinas_servicios.recover', cit_oficina_servicio_id=cit_oficina_servicio.id)) }}{% endif %}
@@ -28,6 +31,7 @@
         {% else %}
             {{ detail.label_value('Servicio', cit_oficina_servicio.cit_servicio.clave + ' - ' + cit_oficina_servicio.cit_servicio.descripcion) }}
         {% endif %}
+        {{ detail.label_value('Límite de Personas', cit_oficina_servicio.limite_personas) }}
         {{ detail.label_value_boolean('Activo', cit_oficina_servicio.es_activo) }}
     {% endcall %}
 {% endblock %}

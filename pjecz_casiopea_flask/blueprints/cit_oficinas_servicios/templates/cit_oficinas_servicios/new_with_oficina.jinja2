@@ -14,6 +14,7 @@
         {% call f.form_tag('cit_oficinas_servicios.new_with_oficina', fid='cit_oficina_servicio_form', **form_kwargs) %}
             {% call f.form_group(form.cit_servicio) %}{% endcall %}
             {% call f.form_group(form.oficina, readonly=true) %}{% endcall %}
+            {% call f.form_group(form.limite_personas) %}{% endcall %}
             {% call f.form_group(form.guardar) %}{% endcall %}
         {% endcall %}
     {% endcall %}

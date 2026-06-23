@@ -4,7 +4,7 @@ Cit Oficinas Servicios, modelos
 
 import uuid
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,6 +29,7 @@ class CitOficinaServicio(database.Model, UniversalMixin):
 
     # Columnas
     descripcion: Mapped[str] = mapped_column(String(256))
+    limite_personas: Mapped[int] = mapped_column(Integer, default=1)
     es_activo: Mapped[bool] = mapped_column(default=True)
 
     def __repr__(self):
