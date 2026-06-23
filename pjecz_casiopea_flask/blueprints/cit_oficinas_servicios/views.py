@@ -15,7 +15,7 @@ from ..modulos.models import Modulo
 from ..oficinas.models import Oficina
 from ..permisos.models import Permiso
 from ..usuarios.decorators import permission_required
-from .forms import CitOficinaServicioWithCitServicioForm, CitOficinaServicioWithOficinaForm
+from .forms import CitOficinaServicioEditForm, CitOficinaServicioWithCitServicioForm, CitOficinaServicioWithOficinaForm
 from .models import CitOficinaServicio
 
 MODULO = "CIT OFICINAS SERVICIOS"
@@ -101,6 +101,7 @@ def datatable_json():
                     ),
                 },
                 "cit_servicio_descripcion": resultado.cit_servicio.descripcion,
+                "limite_personas": resultado.limite_personas,
                 "toggle_es_activo": {
                     "id": resultado.id,
                     "es_activo": resultado.es_activo,
@@ -184,6 +185,7 @@ def new_with_cit_servicio(cit_servicio_id):
             cit_servicio_id=cit_servicio.id,
             oficina_id=oficina.id,
             descripcion=descripcion,
+            limite_personas=form.limite_personas.data,
         )
         cit_oficina_servicio.save()
         bitacora = Bitacora(
@@ -196,6 +198,7 @@ def new_with_cit_servicio(cit_servicio_id):
         flash(bitacora.descripcion, "success")
         return redirect(url_for("cit_oficinas_servicios.detail", cit_oficina_servicio_id=cit_oficina_servicio.id))
     form.cit_servicio.data = f"{cit_servicio.clave} - {cit_servicio.descripcion}"  # Read only string field
+    form.limite_personas.data = form.limite_personas.data or 1
     return render_template(
         "cit_oficinas_servicios/new_with_cit_servicio.jinja2",
         cit_servicio=cit_servicio,
@@ -239,6 +242,7 @@ def new_with_oficina(oficina_id):
             cit_servicio_id=cit_servicio.id,
             oficina_id=oficina.id,
             descripcion=descripcion,
+            limite_personas=form.limite_personas.data,
         )
         cit_oficina_servicio.save()
         bitacora = Bitacora(
@@ -251,11 +255,44 @@ def new_with_oficina(oficina_id):
         flash(bitacora.descripcion, "success")
         return redirect(url_for("cit_oficinas_servicios.detail", cit_oficina_servicio_id=cit_oficina_servicio.id))
     form.oficina.data = f"{oficina.clave} - {oficina.descripcion_corta}"  # Read only string field
+    form.limite_personas.data = form.limite_personas.data or 1
     return render_template(
         "cit_oficinas_servicios/new_with_oficina.jinja2",
         form=form,
         oficina=oficina,
         titulo=f"Agregar una oficina a {oficina.clave}",
+    )
+
+
+@cit_oficinas_servicios.route("/cit_oficinas_servicios/edicion/<cit_oficina_servicio_id>", methods=["GET", "POST"])
+@permission_required(MODULO, Permiso.MODIFICAR)
+def edit(cit_oficina_servicio_id):
+    """Editar Cit Oficina-Servicio"""
+    cit_oficina_servicio_id = safe_uuid(cit_oficina_servicio_id)
+    if cit_oficina_servicio_id == "":
+        abort(400)
+    cit_oficina_servicio = CitOficinaServicio.query.get_or_404(cit_oficina_servicio_id)
+    form = CitOficinaServicioEditForm()
+    if form.validate_on_submit():
+        cit_oficina_servicio.limite_personas = form.limite_personas.data
+        cit_oficina_servicio.save()
+        bitacora = Bitacora(
+            modulo=Modulo.query.filter_by(nombre=MODULO).first(),
+            usuario=current_user,
+            descripcion=safe_message(f"Editado Cit Oficina-Servicio {cit_oficina_servicio.descripcion}"),
+            url=url_for("cit_oficinas_servicios.detail", cit_oficina_servicio_id=cit_oficina_servicio.id),
+        )
+        bitacora.save()
+        flash(bitacora.descripcion, "success")
+        return redirect(url_for("cit_oficinas_servicios.detail", cit_oficina_servicio_id=cit_oficina_servicio.id))
+    form.cit_servicio.data = f"{cit_oficina_servicio.cit_servicio.clave} - {cit_oficina_servicio.cit_servicio.descripcion}"
+    form.oficina.data = f"{cit_oficina_servicio.oficina.clave} - {cit_oficina_servicio.oficina.descripcion_corta}"
+    form.limite_personas.data = cit_oficina_servicio.limite_personas
+    return render_template(
+        "cit_oficinas_servicios/edit.jinja2",
+        cit_oficina_servicio=cit_oficina_servicio,
+        form=form,
+        titulo=f"Editar {cit_oficina_servicio.descripcion}",
     )
 
 
