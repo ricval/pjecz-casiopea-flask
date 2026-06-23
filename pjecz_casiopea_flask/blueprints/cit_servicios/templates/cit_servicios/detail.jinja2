@@ -138,6 +138,7 @@
                         <th>ID</th>
                         <th>Oficina</th>
                         <th>Descripción corta</th>
+                        <th>L.P.</th>
                         <th>Activo</th>
                     </tr>
                 </thead>
@@ -253,6 +254,7 @@
                 { data: 'detalle' },
                 { data: 'oficina' },
                 { data: 'oficina_descripcion_corta' },
+                { data: 'limite_personas' },
                 { data: "toggle_es_activo" }
             ];
             configDTCitOficinasServicios['columnDefs'] = [
@@ -281,7 +283,14 @@
                     }
                 },
                 {
-                    targets: 3, // toggle_es_activo
+                    targets: 3, // limite_personas
+                    data: null,
+                    render: function(data, type, row, meta) {
+                        return data;
+                    }
+                },
+                {
+                    targets: 4, // toggle_es_activo
                     data: null,
                     render: function(data, type, row, meta) {
                         if (data.url === '') {
