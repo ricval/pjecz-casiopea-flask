@@ -3,10 +3,11 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
-### [1.9.0] - 2026-06-23 (Trabajando)
+### [1.9.0] - 2026-06-24 (Trabajando)
 
 ### ✨ Mejoras
 
+- Añadir calendario para mostrar días inhábiles en listado del días inhábiles.
 - Añadido campo de `limite_personas` en la tabla `cit_oficinas_servicios`.
 
 

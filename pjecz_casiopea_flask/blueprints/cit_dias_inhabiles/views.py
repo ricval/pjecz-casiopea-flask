@@ -3,6 +3,7 @@ Cit Dias Inhábiles, vistas
 """
 
 import json
+from datetime import date
 
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
@@ -66,11 +67,16 @@ def datatable_json():
 @cit_dias_inhabiles.route("/cit_dias_inhabiles")
 def list_active():
     """Listado de Cit Dias Inhábiles activos"""
+    dias = CitDiaInhabil.query.filter_by(estatus="A").all()
+    dias_inhabiles_json = json.dumps(
+        {str(d.fecha): url_for("cit_dias_inhabiles.detail", cit_dia_inhabil_id=d.id) for d in dias}
+    )
     return render_template(
         "cit_dias_inhabiles/list.jinja2",
         filtros=json.dumps({"estatus": "A"}),
         titulo="Días Inhábiles",
         estatus="A",
+        dias_inhabiles_json=dias_inhabiles_json,
     )
 
 
@@ -122,6 +128,11 @@ def new():
         bitacora.save()
         flash(bitacora.descripcion, "success")
         return redirect(bitacora.url)
+    if request.method == "GET" and "fecha" in request.args:
+        try:
+            form.fecha.data = date.fromisoformat(request.args["fecha"])
+        except ValueError:
+            pass
     return render_template("cit_dias_inhabiles/new.jinja2", form=form)
 
 
