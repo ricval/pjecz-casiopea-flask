@@ -69,7 +69,7 @@ def list_active():
     """Listado de Cit Dias Inhábiles activos"""
     dias = CitDiaInhabil.query.filter_by(estatus="A").all()
     dias_inhabiles_json = json.dumps(
-        {str(d.fecha): url_for("cit_dias_inhabiles.detail", cit_dia_inhabil_id=d.id) for d in dias}
+        {str(d.fecha): {"url": url_for("cit_dias_inhabiles.detail", cit_dia_inhabil_id=d.id), "desc": d.descripcion} for d in dias}
     )
     return render_template(
         "cit_dias_inhabiles/list.jinja2",

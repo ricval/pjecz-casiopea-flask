@@ -20,12 +20,26 @@
     {% if estatus == 'A' %}
     {% call list.card() %}
         <!-- Calendarios Mini de Días Inhábiles -->
-        <div class="row" id="calendarios-row">
-            <div class="col-md-6 mb-2">
-                <div id="cal-current"></div>
+        <div class="row align-items-start gx-2">
+            <div class="col-auto">
+                <button id="cal-btn-prev" class="btn btn-outline-secondary btn-sm" style="margin-top:2.3rem;" title="Mes anterior">
+                    <span class="mdi mdi-chevron-left"></span>
+                </button>
             </div>
-            <div class="col-md-6 mb-2">
-                <div id="cal-next"></div>
+            <div class="col">
+                <div class="row" id="calendarios-row">
+                    <div class="col-md-6 mb-2">
+                        <div id="cal-current"></div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div id="cal-next"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <button id="cal-btn-next" class="btn btn-outline-secondary btn-sm" style="margin-top:2.3rem;" title="Mes siguiente">
+                    <span class="mdi mdi-chevron-right"></span>
+                </button>
             </div>
         </div>
     {% endcall %}
@@ -105,7 +119,7 @@
 
                     if (esInhabil) {
                         tdClass = 'bg-danger bg-opacity-10';
-                        contenido = `<a href="${mapa[fechaStr]}" class="text-danger text-decoration-none fw-semibold" title="Ver día inhábil">${dia}<br><small style="font-size:0.65rem;line-height:1;">✕</small></a>`;
+                        contenido = `<a href="${mapa[fechaStr].url}" class="text-danger text-decoration-none fw-semibold" title="${mapa[fechaStr].desc}">${dia}</a>`;
                     } else {
                         const esPasado = fechaStr < hoyStr;
                         const sinLink = esFinSemana || esPasado;
@@ -141,10 +155,34 @@
             }
 
             const ahora = new Date();
-            const anio = ahora.getFullYear();
-            const mes = ahora.getMonth();
-            renderCalendario('cal-current', anio, mes);
-            renderCalendario('cal-next', mes === 11 ? anio + 1 : anio, (mes + 1) % 12);
+            const anioBase = ahora.getFullYear();
+            const mesBase = ahora.getMonth();
+            let offsetMeses = 0;
+
+            function mesConOffset(offset) {
+                const total = mesBase + offset;
+                const mes = ((total % 12) + 12) % 12;
+                const anio = anioBase + Math.floor(total / 12);
+                return { anio, mes };
+            }
+
+            function actualizarCalendarios() {
+                const m1 = mesConOffset(offsetMeses);
+                const m2 = mesConOffset(offsetMeses + 1);
+                renderCalendario('cal-current', m1.anio, m1.mes);
+                renderCalendario('cal-next', m2.anio, m2.mes);
+            }
+
+            document.getElementById('cal-btn-prev').addEventListener('click', function() {
+                offsetMeses--;
+                actualizarCalendarios();
+            });
+            document.getElementById('cal-btn-next').addEventListener('click', function() {
+                offsetMeses++;
+                actualizarCalendarios();
+            });
+
+            actualizarCalendarios();
         })();
     </script>
     {% endif %}
