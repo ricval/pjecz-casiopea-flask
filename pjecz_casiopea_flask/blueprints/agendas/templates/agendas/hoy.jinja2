@@ -13,43 +13,29 @@
     {% call list.card() %}
         <p class="mb-2">
             <strong>Oficina:</strong> {{ oficina.descripcion }} &nbsp;|&nbsp;
-            <strong>Servicio:</strong> {{ servicio.clave }} — {{ servicio.descripcion }} &nbsp;|&nbsp;
             <strong>Fecha:</strong> {{ fecha.strftime('%d/%m/%Y') }}
         </p>
-        <table id="agenda" class="table table-bordered table-sm align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th style="width:140px">Horario</th>
-                    <th>Cliente</th>
-                    <th>Notas</th>
-                    <th style="width:160px">Estado / Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for slot in agenda %}
-                <tr>
-                    <td class="text-nowrap fw-bold">
-                        {{ slot.inicio.strftime('%H:%M') }} – {{ slot.termino.strftime('%H:%M') }}
-                    </td>
-                    {% if slot.cita %}
-                    <td>
-                        {{ slot.cita.cit_cliente.nombre }}<br>
-                        <small class="text-secondary">{{ slot.cita.cit_cliente.email }}</small>
-                    </td>
-                    <td>{% if slot.cita.notas %}{% for nota in slot.cita.notas.replace(';', ',').split(',') %}{{ nota.strip() }}{% if not loop.last %}<br>{% endif %}{% endfor %}{% endif %}</td>
-                    {% set cit_cita = slot.cita %}
-                    {% include 'agendas/estado_celda.jinja2' %}
-                    {% else %}
-                    <td colspan="3" class="text-center fst-italic text-muted">— sin cita —</td>
-                    {% endif %}
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="4" class="text-center text-muted">No hay horarios generados para este servicio.</td>
-                </tr>
+        <div class="mb-3" style="max-width: 480px;">
+            <label for="cit_servicio_id" class="form-label"><strong>Servicio</strong></label>
+            <select
+                id="cit_servicio_id"
+                name="cit_servicio_id"
+                class="form-select"
+                hx-get="{{ url_for('agendas.tabla') }}"
+                hx-target="#agenda-tabla-wrapper"
+                hx-swap="innerHTML"
+                hx-trigger="change"
+            >
+                {% for oficina_servicio in oficinas_servicios %}
+                <option value="{{ oficina_servicio.cit_servicio_id }}" {% if oficina_servicio.cit_servicio_id == servicio.id %}selected{% endif %}>
+                    {{ oficina_servicio.cit_servicio.clave }} — {{ oficina_servicio.cit_servicio.descripcion }}
+                </option>
                 {% endfor %}
-            </tbody>
-        </table>
+            </select>
+        </div>
+        <div id="agenda-tabla-wrapper">
+            {% include 'agendas/tabla.jinja2' %}
+        </div>
     {% endcall %}
 {% endblock %}
 

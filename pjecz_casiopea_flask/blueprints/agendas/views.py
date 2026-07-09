@@ -4,7 +4,7 @@ Agenda, vistas
 
 from datetime import date, datetime, timedelta
 
-from flask import Blueprint, abort, render_template, url_for
+from flask import Blueprint, abort, render_template, request, url_for
 from flask_login import current_user, login_required
 
 from ...lib.safe_string import safe_message, safe_string, safe_uuid
@@ -14,6 +14,7 @@ from ..permisos.models import Permiso
 from ..usuarios.decorators import permission_required
 from ..cit_citas.models import CitCita
 from ..cit_clientes.models import CitCliente
+from ..cit_servicios.models import CitServicio
 from ..usuarios_oficinas.models import UsuarioOficina
 from ..cit_oficinas_servicios.models import CitOficinaServicio
 
@@ -30,23 +31,8 @@ def before_request():
     """Permiso por defecto"""
 
 
-@agendas.route("/agendas")
-def list_dia_hoy():
-    """Listado de la agenda del día de hoy"""
-
-    fecha_hoy = date.today()
-
-    # Buscar que oficina tiene asignado el usuario actual
-    usuario_oficina = UsuarioOficina.query.filter_by(usuario=current_user).filter_by(estatus="A").first()
-    if not usuario_oficina:
-        abort(404)
-    oficina = usuario_oficina.oficina
-
-    # Buscar el primer servicio activo de la oficina
-    oficina_servicio = CitOficinaServicio.query.filter_by(oficina=oficina).filter_by(estatus="A").first()
-    if not oficina_servicio:
-        abort(404)
-    cit_servicio = oficina_servicio.cit_servicio
+def construir_agenda(oficina, cit_servicio, fecha):
+    """Construir los renglones de la agenda de una oficina y servicio para una fecha"""
 
     # Determinar horario del servicio; si no tiene, usar el horario de la oficina
     hora_inicio = cit_servicio.desde or oficina.apertura
@@ -54,8 +40,8 @@ def list_dia_hoy():
     duracion = cit_servicio.duracion
     duracion_td = timedelta(hours=duracion.hour, minutes=duracion.minute, seconds=duracion.second)
 
-    # Extraer todas las citas de hoy para esta oficina y servicio
-    fecha_str = fecha_hoy.strftime("%Y-%m-%d")
+    # Extraer todas las citas de la fecha para esta oficina y servicio
+    fecha_str = fecha.strftime("%Y-%m-%d")
     citas = (
         CitCita.query.filter(
             CitCita.inicio >= f"{fecha_str} 00:00:00",
@@ -72,8 +58,8 @@ def list_dia_hoy():
 
     # Generar un renglón por cada slot de duración del servicio
     agenda = []
-    slot_dt = datetime.combine(fecha_hoy, hora_inicio)
-    fin_dt = datetime.combine(fecha_hoy, hora_fin)
+    slot_dt = datetime.combine(fecha, hora_inicio)
+    fin_dt = datetime.combine(fecha, hora_fin)
     while slot_dt < fin_dt:
         siguiente_dt = slot_dt + duracion_td
         agenda.append(
@@ -84,6 +70,47 @@ def list_dia_hoy():
             }
         )
         slot_dt = siguiente_dt
+    return agenda
+
+
+def oficina_servicios_activos(oficina):
+    """Servicios activos de una oficina, ordenados por clave"""
+    return (
+        CitOficinaServicio.query.join(CitServicio)
+        .filter(CitOficinaServicio.oficina == oficina)
+        .filter(CitOficinaServicio.estatus == "A")
+        .filter(CitServicio.estatus == "A")
+        .order_by(CitServicio.clave)
+        .all()
+    )
+
+
+@agendas.route("/agendas")
+def list_dia_hoy():
+    """Listado de la agenda del día de hoy"""
+
+    fecha_hoy = date.today()
+
+    # Buscar que oficina tiene asignado el usuario actual
+    usuario_oficina = UsuarioOficina.query.filter_by(usuario=current_user).filter_by(estatus="A").first()
+    if not usuario_oficina:
+        abort(404)
+    oficina = usuario_oficina.oficina
+
+    # Buscar los servicios activos de la oficina, para mostrarlos en el select
+    oficinas_servicios = oficina_servicios_activos(oficina)
+    if not oficinas_servicios:
+        abort(404)
+
+    # El servicio seleccionado viene en la URL, si no, se usa el primero
+    cit_servicio_id = safe_uuid(request.args.get("cit_servicio_id", ""))
+    oficina_servicio = next(
+        (os for os in oficinas_servicios if str(os.cit_servicio_id) == cit_servicio_id),
+        oficinas_servicios[0],
+    )
+    cit_servicio = oficina_servicio.cit_servicio
+
+    agenda = construir_agenda(oficina, cit_servicio, fecha_hoy)
 
     return render_template(
         "agendas/hoy.jinja2",
@@ -91,8 +118,39 @@ def list_dia_hoy():
         fecha=fecha_hoy,
         oficina=oficina,
         servicio=cit_servicio,
+        oficinas_servicios=oficinas_servicios,
         agenda=agenda,
     )
+
+
+@agendas.route("/agendas/tabla")
+def tabla():
+    """Tabla de la agenda del día de hoy según el servicio seleccionado (fragmento htmx)"""
+
+    cit_servicio_id = safe_uuid(request.args.get("cit_servicio_id", ""))
+    if cit_servicio_id == "":
+        abort(400)
+
+    fecha_hoy = date.today()
+
+    # Buscar que oficina tiene asignado el usuario actual
+    usuario_oficina = UsuarioOficina.query.filter_by(usuario=current_user).filter_by(estatus="A").first()
+    if not usuario_oficina:
+        abort(404)
+    oficina = usuario_oficina.oficina
+
+    # Validar que el servicio solicitado esté activo en esta oficina
+    oficina_servicio = next(
+        (os for os in oficina_servicios_activos(oficina) if str(os.cit_servicio_id) == cit_servicio_id),
+        None,
+    )
+    if not oficina_servicio:
+        abort(404)
+    cit_servicio = oficina_servicio.cit_servicio
+
+    agenda = construir_agenda(oficina, cit_servicio, fecha_hoy)
+
+    return render_template("agendas/tabla.jinja2", agenda=agenda)
 
 
 @agendas.route("/agendas/cambiar_estado/<cit_cita_id>/<estado>", methods=["POST"])
