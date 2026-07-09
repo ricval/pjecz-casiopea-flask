@@ -3,10 +3,11 @@
 Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
-### [1.9.0] - 2026-06-24 (Trabajando)
+### [1.9.0] - 2026-07-09 (Trabajando)
 
 ### ✨ Mejoras
 
+- El módulo de `agendas` ahora puede mostrar varios servicios. Se utiliza un `select box` para seleccionar el servicio y mostrar la tabla con la agenda.
 - Añadir calendario para mostrar días inhábiles en listado del días inhábiles.
 - Añadido campo de `limite_personas` en la tabla `cit_oficinas_servicios`.
 
